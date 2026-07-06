@@ -1,0 +1,12 @@
+{
+  "name": "offlinedev",
+  "version": "1.0.0",
+  "description": "本專案之 `data/raw-mdn/` 目錄下所包含的 Web 技術文件，複製（或修改）自 [MDN Web Docs](https://developer.mozilla.org/)。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,43 @@
+services:
+  registry:
+    image: verdaccio/verdaccio:5
+    container_name: offline_verdaccio
+    user: "0:0"
+    restart: always
+    ports:
+      - "4873:4873"
+    volumes:
+      # 💡 config 一樣唯讀掛載實體檔案（Windows 讀取通常沒問題）
+      - ./registry/config.yaml:/verdaccio/conf/config.yaml:ro
+      # 🚀 storage 用 Docker Named Volume，解決 Windows 寫入
+      - verdaccio_storage:/verdaccio/storage
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4873/-/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: offline_ollama
+    restart: always
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      # 💡 限制併發防止舊筆電 CPU 倒地
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_KEEP_ALIVE=-1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+# 🚀 宣告具名磁碟卷，讓 Docker 在 WSL2 內部接管權限
+volumes:
+  verdaccio_storage:

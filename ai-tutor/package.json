@@ -1,0 +1,19 @@
+{
+  "name": "ai-tutor",
+  "version": "1.0.0",
+  "description": "Offline RAG implementation for COSCUP 2026",
+  "bin": {
+    "bew": "bin/cli.js"
+  },
+  "main": "scripts/ingest.js",
+  "scripts": {
+    "ingest": "node scripts/ingest.js",
+    "help": "node scripts/helper.js"
+  },
+  "author": "KAN UIIU",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "inquirer": "^8.2.7"
+  }
+}

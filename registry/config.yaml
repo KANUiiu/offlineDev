@@ -1,0 +1,16 @@
+# 存放路徑
+storage: /verdaccio/storage
+
+auth:
+  htpasswd:
+    file: /verdaccio/conf/htpasswd
+
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+
+packages:
+  "**":
+    access: $all
+    publish: $all
+    proxy: npmjs

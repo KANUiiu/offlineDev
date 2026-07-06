@@ -1,0 +1,70 @@
+{
+  "0": {
+    "source": "guide\\closure.md",
+    "text": "A **closure** is the combination of a function bundled together (enclosed) with references to its surrounding state (the **lexical environment**). In other words, a closure gives a function access to its outer scope. In JavaScript, closures are created every time a function is created, at function creation time."
+  },
+  "1": {
+    "source": "guide\\using-promises.md",
+    "text": "Cancellation\r\n\r\n`Promise` itself has no first-class protocol for cancellation, but you may be able to directly cancel the underlying asynchronous operation, typically using `AbortController`."
+  },
+  "2": {
+    "source": "guide\\using-promises.md",
+    "text": "See also\r\n\r\n- \r\n- \r\n- \r\n- Promises/A+ specification\r\n- We have a problem with promises on pouchdb.com (2015)"
+  },
+  "3": {
+    "source": "javascript\\array-map.md",
+    "text": "The **`map()`** method of  instances creates\r\na new array populated with the results of calling a provided function on\r\nevery element in the calling array.\r\n\r\n\r\n\r\n```js\r\nconst array = [1, 4, 9, 16];\r\n\r\n// Pass a function to map\r\nconst mapped = array.map((x) => x * 2);\r\n\r\nconsole.log(mapped);\r\n// Expected output: Array [2, 8, 18, 32]\r\n```"
+  },
+  "4": {
+    "source": "javascript\\array-map.md",
+    "text": "Syntax\r\n\r\n```js-nolint\r\nmap(callbackFn)\r\nmap(callbackFn, thisArg)\r\n```\r\n\r\n### Parameters\r\n\r\n- `callbackFn`\r\n  - : A function to execute for each element in the array. Its return value is added as a single element in the new array. The function is called with the following arguments:\r\n    - `element`\r\n      - : The current element being processed in the array.\r\n    - `index`\r\n      - : The index of the current element being processed in the array.\r\n    - `array`\r\n      - : The array `map()` was called upon.\r\n- `thisArg` \r\n  - : A value to use as `this` when executing `callbackFn`. See iterative methods.\r\n\r\n### Return value\r\n\r\nA new array with each element being the result of the callback function."
+  },
+  "5": {
+    "source": "javascript\\array-map.md",
+    "text": "Description\r\n\r\nThe `map()` method is an iterative method. It calls a provided `callbackFn` function once for each element in an array and constructs a new array from the results. Read the iterative methods section for more information about how these methods work in general.\r\n\r\n`callbackFn` is invoked only for array indexes which have assigned values. It is not invoked for empty slots in sparse arrays.\r\n\r\nThe `map()` method is generic. It only expects the `this` value to have a `length` property and integer-keyed properties.\r\n\r\nSince `map` builds a new array, calling it without using the returned array is an anti-pattern; use  or  instead."
+  },
+  "6": {
+    "source": "javascript\\array-map.md",
+    "text": "See also\r\n\r\n- Polyfill of `Array.prototype.map` in `core-js`\r\n- es-shims polyfill of `Array.prototype.map`\r\n- Indexed collections guide\r\n- \r\n- \r\n- \r\n- \r\n-"
+  },
+  "7": {
+    "source": "javascript\\array.md",
+    "text": "See also\r\n\r\n- Indexed collections guide\r\n-"
+  },
+  "8": {
+    "source": "javascript\\promise.md",
+    "text": "The **`Promise`** object represents the eventual completion (or failure) of an asynchronous operation and its resulting value.\r\n\r\nTo learn about the way promises work and how you can use them, we advise you to read Using promises first."
+  },
+  "9": {
+    "source": "javascript\\promise.md",
+    "text": "Constructor\r\n\r\n- \r\n  - : Creates a new `Promise` object. The constructor is primarily used to wrap functions that do not already support promises."
+  },
+  "10": {
+    "source": "javascript\\promise.md",
+    "text": "Static properties\r\n\r\n- [`Promise[Symbol.species]`](/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/Symbol.species)\r\n  - : Returns the constructor used to construct return values from promise methods."
+  },
+  "11": {
+    "source": "javascript\\promise.md",
+    "text": "Instance properties\r\n\r\nThese properties are defined on `Promise.prototype` and shared by all `Promise` instances.\r\n\r\n- \r\n  - : The constructor function that created the instance object. For `Promise` instances, the initial value is the  constructor.\r\n- `Promise.prototype[Symbol.toStringTag]`\r\n  - : The initial value of the [`[Symbol.toStringTag]`](/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag) property is the string `\"Promise\"`. This property is used in ."
+  },
+  "12": {
+    "source": "javascript\\promise.md",
+    "text": "Instance methods\r\n\r\n- \r\n  - : Appends a rejection handler callback to the promise, and returns a new promise resolving to the return value of the callback if it is called, or to its original fulfillment value if the promise is instead fulfilled.\r\n- \r\n  - : Appends a handler to the promise, and returns a new promise that is resolved when the original promise is resolved. The handler is called when the promise is settled, whether fulfilled or rejected.\r\n- \r\n  - : Appends fulfillment and rejection handlers to the promise, and returns a new promise resolving to the return value of the called handler, or to its original settled value if the promise was not handled (i.e., if the relevant handler `onFulfilled` or `onRejected` is not a function)."
+  },
+  "13": {
+    "source": "javascript\\promise.md",
+    "text": "See also\r\n\r\n- Polyfill of `Promise` in `core-js`\r\n- Using promises guide\r\n- Promises/A+ specification\r\n- JavaScript Promises: an introduction on web.dev (2013)\r\n- Callbacks, Promises, and Coroutines: Asynchronous Programming Patterns in JavaScript slide show by Domenic Denicola (2011)"
+  },
+  "14": {
+    "source": "web-api\\fetch.md",
+    "text": "See also\r\n\r\n- Service Worker API\r\n- Streams API\r\n- CORS\r\n- HTTP\r\n- Fetch examples on GitHub"
+  },
+  "15": {
+    "source": "web-api\\web-storage.md",
+    "text": "The Web Storage API provides mechanisms by which browsers can securely store key/value pairs.\r\n\r\nThis article provides a walkthrough of how to make use of this technology."
+  },
+  "16": {
+    "source": "web-api\\web-storage.md",
+    "text": "See also\r\n\r\n- Web Storage API landing page"
+  }
+}

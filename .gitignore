@@ -1,0 +1,17 @@
+# Node
+node_modules/
+*.log
+
+# Docker & Persistence
+ollama_data/
+registry/storage/
+data/vdb-store/
+
+# Environment
+.env
+.env.local
+
+# Temp files
+context.md
+.aider*
+.DS_Store
