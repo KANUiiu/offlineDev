@@ -6,21 +6,21 @@
 
 ```
 offlineDev/
-├── docker-compose.yaml       # 統一管理 Ollama & Verdaccio
+├── docker-compose.yaml       # 基礎設施編排 (Ollama LLM 服務 & Verdaccio 私有倉庫)
 ├── registry/
-│   └── config.yaml           # 只留設定檔，刪除 storage/
+│   └── config.yaml           # Verdaccio 配置設定
 ├── ollama_data/              # 本機 LLM 快取
 └── ai-tutor/                 # 【核心主目錄】
-    ├── .npmrc                # 移至此處，統一設定 npm 鏡像指向 Verdaccio
-    ├── context.md            # 臨時生成的文件
+    ├── .npmrc                # 強制將所有套件安裝導向本地私服，確保離線開發
+    ├── context.md            # 暫存對話脈絡檔案供 aider 讀取
     ├── data/                 # 知識庫儲存區
-    │   ├── raw-mdn/
-    │   └── vdb-store/
+    │   ├── raw-mdn/          # 存放 AI 學習用的原始 Markdown 技術文檔
+    │   └── vdb-store/        # 存放 AI 用來進行快速檢索的向量化資料庫
     └── scripts/              # 【核心操作區】
-        ├── helper.js         # 統一的入口選單 (取代原本的 bin/)
-        ├── ingest.js
-        ├── rag-query.js
-        └── aider-rag.js
+        ├── helper.js         # 入口選單
+        ├── ingest.js         # 將文檔轉換成向量資料
+        ├── rag-query.js      # 負責查詢向量資料庫並整合回答的檢索邏輯
+        └── aider-rag.js      # 將本地知識庫與編碼工具串接的橋樑
 ```
 
 ---
@@ -39,7 +39,7 @@ offlineDev/
 
 ```bash
 # 1. 下載並進入目錄
-git clone <你的-repo-url>
+git clone https://github.com/KANUiiu/offlineDev.git
 cd offlineDev
 
 # 2. 安裝必要的 Node.js 套件
