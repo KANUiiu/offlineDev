@@ -16,11 +16,15 @@ offlineDev/
     ├── data/                 # 知識庫儲存區
     │   ├── raw-mdn/          # 存放 AI 學習用的原始 Markdown 技術文檔
     │   └── vdb-store/        # 存放 AI 用來進行快速檢索的向量化資料庫
+    │       ├── vectors.json          # 儲存技術文檔的向量特徵陣列，供檢索使用
+    │       ├── mapping.json          # 知識庫的索引檔，儲存 ID 與原始 Markdown 文字對應
+    │       └── semantic-cache.json   # 存放 AI 歷史回答的語義快取，用於降低重複推理成本
     └── scripts/              # 【核心操作區】
         ├── helper.js         # 入口選單
         ├── ingest.js         # 將文檔轉換成向量資料
         ├── rag-query.js      # 負責查詢向量資料庫並整合回答的檢索邏輯
-        └── aider-rag.js      # 將本地知識庫與編碼工具串接的橋樑
+        ├── aider-rag.js      # 將本地知識庫與編碼工具串接的橋樑
+        └── cache.js          # Semantic Cache 的語義比對與管理引擎
 ```
 
 ---

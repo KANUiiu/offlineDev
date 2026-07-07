@@ -16,11 +16,15 @@ offlineDev/
     ├── data/                 # Knowledge base storage
     │   ├── raw-mdn/          # Raw Markdown technical documentation for AI learning
     │   └── vdb-store/        # Vector database used for fast retrieval by the AI
+    │       ├── vectors.json          # Stores vector embeddings of technical docs for retrieval
+    │       ├── mapping.json          # Index file mapping IDs to raw Markdown content
+    │       └── semantic-cache.json   # Stores semantic cache of AI responses to reduce inference costs
     └── scripts/              # 【Core Operation Area】
         ├── helper.js         # Interactive main menu
         ├── ingest.js         # Converts documentation into vector data
         ├── rag-query.js      # Retrieval logic for querying the vector database
-        └── aider-rag.js      # Bridge connecting the local knowledge base to coding tools
+        ├── aider-rag.js      # Bridge connecting the local knowledge base to coding tools
+        └── cache.js          # Semantic cache matching and management engine
 ```
 
 ## Quick Start
