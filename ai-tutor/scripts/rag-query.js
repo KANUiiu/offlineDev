@@ -1,6 +1,7 @@
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const fs = require("fs");
+const cacheManager = require("./cache");
 
 const VDB_STORE_DIR = path.join(__dirname, "../data/vdb-store");
 const VECTORS_PATH = path.join(VDB_STORE_DIR, "vectors.json");
@@ -52,7 +53,6 @@ async function askAI(studentQuestion) {
   // 加入檢查：若 API 失敗，embedding 會是 undefined
   if (!embeddingRes.ok) {
     console.error("❌ 無法從 Ollama 獲取 Embedding，請檢查服務是否啟動。");
-    return;
   }
 
   const { embedding } = await embeddingRes.json();
@@ -61,6 +61,15 @@ async function askAI(studentQuestion) {
     console.error("❌ Embedding 生成失敗，回傳為空。");
     return;
   }
+
+  // --- 新增：快取層攔截 ---
+  const cachedAnswer = cacheManager.lookup(embedding, 0.95);
+  if (cachedAnswer) {
+    console.log("⚡ [Cache Hit] 發現相似問題，直接回傳結果！");
+    process.stdout.write(cachedAnswer); // 直接顯示答案
+    return; // 結束，不跑模型
+  }
+  // -----------------------
 
   let bestScore = -1;
   let bestMatchId = null;
@@ -95,26 +104,24 @@ async function askAI(studentQuestion) {
   console.log(`🔍 [本地檢索成功] 相似度: ${bestScore.toFixed(4)}`);
   console.log(`📄 最佳匹配片段來自: ${sourceFile}\n`);
 
-  const prompt = `### Role
-  你是一位資深的軟體技術導師，教學風格嚴謹、精簡且專業。
+  const prompt = `[SYSTEM]
+  你是一位資深的軟體技術導師，風格嚴謹、精簡且專業。
+  請嚴格依據【參考文件】回答【學生問題】，若文件中沒有答案，請回答「參考文件中未提及相關資訊」。
 
-  ### Task
-  請根據提供的【參考文件】回答【學生問題】。
+  [CONSTRAINTS]
+  1. 繁體中文，先翻譯再歸納，不可輸出原文。
+  2. 回答長度控制在 150 字以內。
+  3. 必須包含一段簡短的程式碼範例。
+  4. 禁止任何開場白與結尾寒暄，直接輸出內容。
 
-  ### Constraints 
-  1. 語言：強制使用「繁體中文」回答。若參考文件為英文，必須先進行翻譯並歸納，不可輸出原文。
-  2. 長度：回答內容控制在 150 個中文字以內。
-  3. 語氣：專業、條列式說明，並提供一段範例代碼。
-  4. 結構：請直接開始回答，不要有任何開場白（如「好的，我為您說明...」）。
-
-  ### Input
-  【參考文件】
+  [INPUT]
+  ### 參考文件 ###
   ${mdnKnowledge}
 
-  【學生問題】
+  ### 學生問題 ###
   ${studentQuestion}
 
-  ### Response (請使用繁體中文)
+  [RESPONSE]
   `;
   console.time("LLM 生成時間");
   const chatRes = await fetch("http://localhost:11434/api/generate", {
@@ -124,12 +131,12 @@ async function askAI(studentQuestion) {
       prompt: prompt,
       stream: true,
       options: {
-        num_predict: 250, // 限制回答長度
+        num_predict: 800,
         temperature: 0.1,
-        repeat_penalty: 1.3,
-        top_k: 10, // 限制候選詞數量，運算會變快
-        num_ctx: 2048, // 上下文長度
-        stop: ["###", "【學生問題】", "【參考文件】", "\n\n\n"],
+        repeat_penalty: 1.1,
+        top_k: 40,
+        num_ctx: 4096,
+        stop: ["[SYSTEM]", "[RESPONSE]"],
       },
     }),
   });
@@ -137,7 +144,7 @@ async function askAI(studentQuestion) {
 
   console.log("--- AI 導師的回答 ---");
 
-  let fullResponse = ""; // 收集完整回應
+  let fullResponse = "";
   const reader = chatRes.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
@@ -156,17 +163,15 @@ async function askAI(studentQuestion) {
         try {
           const json = JSON.parse(line);
           if (json.response) {
-            // 關鍵修正：偵測並移除結束標籤
             const cleanedText = json.response.replace(/<\|im_end\|>/g, "");
-
-            // 檢查這段文字是否包含重複的 Prompt 結構 (如 <|im_start|>system)
             if (cleanedText.includes("<|im_start|>")) {
-              // 如果模型開始產生亂七八糟的 Prompt 標籤，代表回答其實已經結束了
               console.log("\n\n--- AI 導師回答完畢 ---");
               reader.cancel();
+              // 離開前也要存入快取
+              cacheManager.save(studentQuestion, embedding, fullResponse);
               return;
             }
-
+            fullResponse += cleanedText;
             process.stdout.write(cleanedText);
           }
         } catch (e) {
@@ -182,9 +187,8 @@ async function askAI(studentQuestion) {
 
   console.log("\n--- 回答結束 ---");
 
-  // const finalData = await chatRes.json();
-  // console.log("--- AI 導師的回答 ---");
-  // console.log(finalData.response);
+  // --- 新增：回填快取 ---
+  cacheManager.save(studentQuestion, embedding, fullResponse);
 }
 
 const question = process.argv[2];
