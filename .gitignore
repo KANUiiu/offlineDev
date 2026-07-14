@@ -12,6 +12,6 @@ data/vdb-store/
 .env.local
 
 # Temp files
-context.md
 .aider*
+!.aiderignore
 .DS_Store

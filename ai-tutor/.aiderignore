@@ -1,0 +1,7 @@
+node_modules/
+data/raw-mdn/
+scripts/
+.env
+.npmrc
+package-lock.json
+package.json
