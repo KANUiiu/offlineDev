@@ -3,11 +3,29 @@ const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
-// 定義 ai-tutor 的根目錄
-const AI_TUTOR_ROOT = path.resolve(__dirname, "..");
-const RAG_SCRIPT = path.join(AI_TUTOR_ROOT, "scripts", "rag-query.js");
-const AIDER_RAG_SCRIPT = path.join(AI_TUTOR_ROOT, "scripts", "aider-rag.js");
-const CONTEXT_FILE = path.join(AI_TUTOR_ROOT, "context.md");
+// 1. 定義專案根目錄 (offlineDev/)
+const PROJECT_ROOT = path.resolve(__dirname, "..");
+// 2. 定義各子路徑 (相對於 PROJECT_ROOT)
+const AI_TUTOR_DIR = path.join(PROJECT_ROOT, "ai-tutor");
+const RAG_SCRIPT = path.join(AI_TUTOR_DIR, "scripts", "rag-query.js");
+const AIDER_RAG_SCRIPT = path.join(AI_TUTOR_DIR, "scripts", "aider-rag.js");
+const CONTEXT_FILE = path.join(AI_TUTOR_DIR, "context.md");
+const MODEL_PRICES_FILE = path.join(
+  PROJECT_ROOT,
+  "aider-config",
+  "model_prices_and_context_window.json",
+);
+
+// 設定統一執行環境 (cwd 永遠指向最外層的 Git 根目錄)
+const execOptions = {
+  stdio: "inherit",
+  cwd: PROJECT_ROOT,
+  env: {
+    ...process.env,
+    OLLAMA_API_BASE: "http://localhost:11434",
+    LITELLM_MODEL_PRICES_JSON: MODEL_PRICES_FILE,
+  },
+};
 
 async function warmUpOllama() {
   try {
@@ -21,12 +39,13 @@ async function warmUpOllama() {
       }),
     });
   } catch (e) {
-    console.warn("⚠️ Please check if Ollama is running");
+    console.warn("⚠️ 請檢查 Ollama");
   }
 }
 
 async function main() {
-  warmUpOllama().catch((err) => console.error("⚠️ Error from Ollama:", err));
+  warmUpOllama();
+
   const { choice } = await inquirer.prompt([
     {
       type: "list",
@@ -40,55 +59,60 @@ async function main() {
     const { query } = await inquirer.prompt([
       { name: "query", message: "你的問題是？" },
     ]);
-    execSync(`node "${RAG_SCRIPT}" "${query}"`, { stdio: "inherit" });
+    execSync(`node "${RAG_SCRIPT}" "${query}"`, execOptions);
   } else if (choice === "改 Code 模式 (Aider)") {
     const { fileName } = await inquirer.prompt([
-      { name: "fileName", message: "你要修改哪個檔案？(例如: practice.js)" },
+      {
+        name: "fileName",
+        message: "你要修改哪個檔案？(請輸入相對於 ai-tutor 的路徑):",
+      },
     ]);
 
-    // 關鍵：保留 absoluteFilePath 以確保 Aider 鎖定正確檔案
-    const absoluteFilePath = path.resolve(AI_TUTOR_ROOT, fileName);
+    // 關鍵路徑修正：給予完整相對於 Git 根目錄的路徑
+    const relativePath = path.join("ai-tutor", fileName);
+    const absoluteFilePath = path.resolve(PROJECT_ROOT, relativePath);
+
+    if (!fs.existsSync(path.dirname(absoluteFilePath))) {
+      fs.mkdirSync(path.dirname(absoluteFilePath), { recursive: true });
+    }
 
     const { task } = await inquirer.prompt([
       { name: "task", message: "描述任務：" },
     ]);
 
-    console.log(`🔍 搜尋與 ${fileName} 相關的知識庫中...`);
-
-    // 修正：單一邏輯處理，確保 Context 生成乾淨
+    // 處理 RAG 內容
     try {
       const output = execSync(`node "${AIDER_RAG_SCRIPT}" "${task}"`, {
         encoding: "utf-8",
       });
-
-      if (output && output.trim().length > 10) {
-        fs.writeFileSync(CONTEXT_FILE, output);
-        console.log("✅ 相關參考程式碼已載入。");
-      } else {
-        fs.writeFileSync(CONTEXT_FILE, "無參考資料。");
-        console.log("⚠️ 未搜尋到相關知識，將以空 Context 啟動。");
-      }
+      fs.writeFileSync(
+        CONTEXT_FILE,
+        output.includes("SYSTEM:") ? "無參考資料。" : output,
+      );
     } catch (err) {
       fs.writeFileSync(CONTEXT_FILE, "無參考資料。");
-      console.log("⚠️ RAG 搜尋失敗，將以空 Context 啟動。");
     }
 
-    console.log(`🤖 啟動 Aider 針對 ${fileName} 進行修改...`);
+    // 確保檔案存在並加入 Git
+    if (!fs.existsSync(absoluteFilePath))
+      fs.writeFileSync(absoluteFilePath, "// Initial content");
+    execSync(`git add "${relativePath}"`, execOptions);
+
+    // 啟動 Aider (關鍵修正：--only-file 鎖定在該路徑)
+    console.log(`🤖 啟動 Aider 針對 ${relativePath} 進行修改...`);
+
+    const taskWithFormat = `${task}。請嚴格遵守：只輸出 SEARCH/REPLACE 區塊，禁止包含路徑或標題。`;
+
     try {
       execSync(
-        `aider --model ollama/phi3:mini --read "${CONTEXT_FILE}" --message "${task}" "${absoluteFilePath}" --yes --no-show-model-warnings --no-check-update --no-analytics`,
-        {
-          stdio: "inherit",
-          cwd: AI_TUTOR_ROOT,
-          env: { ...process.env, OLLAMA_API_BASE: "http://localhost:11434" },
-        },
+        `aider --model ollama/phi3:mini --read "ai-tutor/context.md" --only-file "${relativePath}" --message "${taskWithFormat}" --yes --no-show-model-warnings --no-check-update --no-analytics`,
+        execOptions,
       );
+    } catch (err) {
+      console.error("❌ Aider 執行錯誤。");
     } finally {
       if (fs.existsSync(CONTEXT_FILE)) fs.unlinkSync(CONTEXT_FILE);
-      console.log("🧹 清理臨時檔完成。");
     }
-  } else if (choice === "離開") {
-    process.exit(0);
   }
 }
 
