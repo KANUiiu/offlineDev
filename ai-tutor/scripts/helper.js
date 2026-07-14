@@ -3,17 +3,20 @@ const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
-// 1. 定義專案根目錄 (offlineDev/)
-const PROJECT_ROOT = path.resolve(__dirname, "..");
-// 2. 定義各子路徑 (相對於 PROJECT_ROOT)
-const AI_TUTOR_DIR = path.join(PROJECT_ROOT, "ai-tutor");
-const RAG_SCRIPT = path.join(AI_TUTOR_DIR, "scripts", "rag-query.js");
-const AIDER_RAG_SCRIPT = path.join(AI_TUTOR_DIR, "scripts", "aider-rag.js");
-const CONTEXT_FILE = path.join(AI_TUTOR_DIR, "context.md");
+// 1. ai-tutor/scripts/
+const SCRIPT_DIR = __dirname;
+
+// 2. ROOTS
+const AI_TUTOR_ROOT = path.resolve(SCRIPT_DIR, ".."); // 指向 ai-tutor/
+const PROJECT_ROOT = path.resolve(AI_TUTOR_ROOT, ".."); // 指向 offlineDev/
+
+// 3. Absolute paths
+const RAG_SCRIPT = path.join(SCRIPT_DIR, "rag-query.js");
+const AIDER_RAG_SCRIPT = path.join(SCRIPT_DIR, "aider-rag.js");
+const CONTEXT_FILE = path.join(AI_TUTOR_ROOT, "context.md");
 const MODEL_PRICES_FILE = path.join(
-  PROJECT_ROOT,
-  "aider-config",
-  "model_prices_and_context_window.json",
+  AI_TUTOR_ROOT,
+  "data/aider-config/model_prices_and_context_window.json",
 );
 
 // 設定統一執行環境 (cwd 永遠指向最外層的 Git 根目錄)
@@ -105,7 +108,7 @@ async function main() {
 
     try {
       execSync(
-        `aider --model ollama/phi3:mini --read "ai-tutor/context.md" --only-file "${relativePath}" --message "${taskWithFormat}" --yes --no-show-model-warnings --no-check-update --no-analytics`,
+        `aider --model ollama/phi3:mini --read "context.md" --message "${taskWithFormat}" "${relativePath}" --no-git --map-tokens 0 --yes --no-show-model-warnings --no-check-update --no-analytics`,
         execOptions,
       );
     } catch (err) {
