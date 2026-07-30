@@ -87,8 +87,9 @@ In the ai-tutor/ directory, run:
 
 ```Bash
 npm run help
-This will launch an interactive menu, allowing you to choose between "Q&A Mode" or "Coding Mode (Aider)."
 ```
+
+This will launch an interactive menu, allowing you to choose between "Q&A Mode" or "Coding Mode (Aider)."
 
 ## Attribution & Licensing
 
