@@ -1,70 +1,1390 @@
 {
   "0": {
     "source": "guide\\closure.md",
-    "text": "A **closure** is the combination of a function bundled together (enclosed) with references to its surrounding state (the **lexical environment**). In other words, a closure gives a function access to its outer scope. In JavaScript, closures are created every time a function is created, at function creation time."
+    "text": "A **closure** is the combination of a function bundled together (enclosed) with references to its surrounding state (the **lexical environment**). In other words, a closure gives a function access to its outer scope. In JavaScript, closures are created every time a function is created, at function creation time.\n## Lexical scoping\nConsider the following example code:\n```js\nfunction init() {"
   },
   "1": {
-    "source": "guide\\using-promises.md",
-    "text": "Cancellation\r\n\r\n`Promise` itself has no first-class protocol for cancellation, but you may be able to directly cancel the underlying asynchronous operation, typically using `AbortController`."
+    "source": "guide\\closure.md",
+    "text": "var name = \"Mozilla\"; // name is a local variable created by init\nfunction displayName() {\n// displayName() is the inner function, that forms a closure\nconsole.log(name); // use variable declared in the parent function\n}\ndisplayName();\n}\ninit();\n```"
   },
   "2": {
-    "source": "guide\\using-promises.md",
-    "text": "See also\r\n\r\n- \r\n- \r\n- \r\n- Promises/A+ specification\r\n- We have a problem with promises on pouchdb.com (2015)"
+    "source": "guide\\closure.md",
+    "text": "`init()` creates a local variable called `name` and a function called `displayName()`. The `displayName()` function is an inner function that is defined inside `init()` and is available only within the body of the `init()` function. Note that the `displayName()` function has no local variables of its own. However, since inner functions have access to the variables of outer scopes, `displayName()` "
   },
   "3": {
-    "source": "javascript\\array-map.md",
-    "text": "The **`map()`** method of  instances creates\r\na new array populated with the results of calling a provided function on\r\nevery element in the calling array.\r\n\r\n\r\n\r\n```js\r\nconst array = [1, 4, 9, 16];\r\n\r\n// Pass a function to map\r\nconst mapped = array.map((x) => x * 2);\r\n\r\nconsole.log(mapped);\r\n// Expected output: Array [2, 8, 18, 32]\r\n```"
+    "source": "guide\\closure.md",
+    "text": "can access the variable `name` declared in the parent function, `init()`."
   },
   "4": {
-    "source": "javascript\\array-map.md",
-    "text": "Syntax\r\n\r\n```js-nolint\r\nmap(callbackFn)\r\nmap(callbackFn, thisArg)\r\n```\r\n\r\n### Parameters\r\n\r\n- `callbackFn`\r\n  - : A function to execute for each element in the array. Its return value is added as a single element in the new array. The function is called with the following arguments:\r\n    - `element`\r\n      - : The current element being processed in the array.\r\n    - `index`\r\n      - : The index of the current element being processed in the array.\r\n    - `array`\r\n      - : The array `map()` was called upon.\r\n- `thisArg` \r\n  - : A value to use as `this` when executing `callbackFn`. See iterative methods.\r\n\r\n### Return value\r\n\r\nA new array with each element being the result of the callback function."
+    "source": "guide\\closure.md",
+    "text": "If you run this code in your console, you can see that the `console.log()` statement within the `displayName()` function successfully displays the value of the `name` variable, which is declared in its parent function. This is an example of _lexical scoping_, which describes how a parser resolves variable names when functions are nested. The word _lexical_ refers to the fact that lexical scoping u"
   },
   "5": {
-    "source": "javascript\\array-map.md",
-    "text": "Description\r\n\r\nThe `map()` method is an iterative method. It calls a provided `callbackFn` function once for each element in an array and constructs a new array from the results. Read the iterative methods section for more information about how these methods work in general.\r\n\r\n`callbackFn` is invoked only for array indexes which have assigned values. It is not invoked for empty slots in sparse arrays.\r\n\r\nThe `map()` method is generic. It only expects the `this` value to have a `length` property and integer-keyed properties.\r\n\r\nSince `map` builds a new array, calling it without using the returned array is an anti-pattern; use  or  instead."
+    "source": "guide\\closure.md",
+    "text": "ses the location where a variable is declared within the source code to determine where that variable is available. Nested functions have access to variables declared in their outer scope."
   },
   "6": {
-    "source": "javascript\\array-map.md",
-    "text": "See also\r\n\r\n- Polyfill of `Array.prototype.map` in `core-js`\r\n- es-shims polyfill of `Array.prototype.map`\r\n- Indexed collections guide\r\n- \r\n- \r\n- \r\n- \r\n-"
+    "source": "guide\\closure.md",
+    "text": "### Scoping with let and const\nTraditionally (before ES6), JavaScript variables only had two kinds of scopes: _function scope_ and _global scope_. Variables declared with `var` are either function-scoped or global-scoped, depending on whether they are declared within a function or outside a function. This can be tricky, because blocks with curly braces do not create scopes:\n```js"
   },
   "7": {
-    "source": "javascript\\array.md",
-    "text": "See also\r\n\r\n- Indexed collections guide\r\n-"
+    "source": "guide\\closure.md",
+    "text": "if (Math.random() > 0.5) {\nvar x = 1;\n} else {\nvar x = 2;\n}\nconsole.log(x);\n```"
   },
   "8": {
-    "source": "javascript\\promise.md",
-    "text": "The **`Promise`** object represents the eventual completion (or failure) of an asynchronous operation and its resulting value.\r\n\r\nTo learn about the way promises work and how you can use them, we advise you to read Using promises first."
+    "source": "guide\\closure.md",
+    "text": "For people from other languages (e.g., C, Java) where blocks create scopes, the above code should throw an error on the `console.log` line, because we are outside the scope of `x` in either block. However, because blocks don't create scopes for `var`, the `var` statements here actually create a global variable. There is also a practical example introduced below that illustrates how this can cause "
   },
   "9": {
-    "source": "javascript\\promise.md",
-    "text": "Constructor\r\n\r\n- \r\n  - : Creates a new `Promise` object. The constructor is primarily used to wrap functions that do not already support promises."
+    "source": "guide\\closure.md",
+    "text": "actual bugs when combined with closures."
   },
   "10": {
-    "source": "javascript\\promise.md",
-    "text": "Static properties\r\n\r\n- [`Promise[Symbol.species]`](/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/Symbol.species)\r\n  - : Returns the constructor used to construct return values from promise methods."
+    "source": "guide\\closure.md",
+    "text": "In ES6, JavaScript introduced the `let` and `const` declarations, which, among other things like temporal dead zones, allow you to create block-scoped variables.\n```js\nif (Math.random() > 0.5) {\nconst x = 1;\n} else {\nconst x = 2;\n}\nconsole.log(x); // ReferenceError: x is not defined\n```"
   },
   "11": {
-    "source": "javascript\\promise.md",
-    "text": "Instance properties\r\n\r\nThese properties are defined on `Promise.prototype` and shared by all `Promise` instances.\r\n\r\n- \r\n  - : The constructor function that created the instance object. For `Promise` instances, the initial value is the  constructor.\r\n- `Promise.prototype[Symbol.toStringTag]`\r\n  - : The initial value of the [`[Symbol.toStringTag]`](/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag) property is the string `\"Promise\"`. This property is used in ."
+    "source": "guide\\closure.md",
+    "text": "In essence, blocks are finally treated as scopes in ES6, but only if you declare variables with `let` or `const`. In addition, ES6 introduced modules, which introduced another kind of scope. Closures are able to capture variables in all these scopes, which we will introduce later.\n## Closure\nConsider the following code example:\n```js\nfunction makeFunc() {\nconst name = \"Mozilla\";"
   },
   "12": {
-    "source": "javascript\\promise.md",
-    "text": "Instance methods\r\n\r\n- \r\n  - : Appends a rejection handler callback to the promise, and returns a new promise resolving to the return value of the callback if it is called, or to its original fulfillment value if the promise is instead fulfilled.\r\n- \r\n  - : Appends a handler to the promise, and returns a new promise that is resolved when the original promise is resolved. The handler is called when the promise is settled, whether fulfilled or rejected.\r\n- \r\n  - : Appends fulfillment and rejection handlers to the promise, and returns a new promise resolving to the return value of the called handler, or to its original settled value if the promise was not handled (i.e., if the relevant handler `onFulfilled` or `onRejected` is not a function)."
+    "source": "guide\\closure.md",
+    "text": "function displayName() {\nconsole.log(name);\n}\nreturn displayName;\n}\nconst myFunc = makeFunc();\nmyFunc();\n```\nRunning this code has exactly the same effect as the previous example of the `init()` function above. What's different (and interesting) is that the `displayName()` inner function is returned from the outer function _before being executed_."
   },
   "13": {
-    "source": "javascript\\promise.md",
-    "text": "See also\r\n\r\n- Polyfill of `Promise` in `core-js`\r\n- Using promises guide\r\n- Promises/A+ specification\r\n- JavaScript Promises: an introduction on web.dev (2013)\r\n- Callbacks, Promises, and Coroutines: Asynchronous Programming Patterns in JavaScript slide show by Domenic Denicola (2011)"
+    "source": "guide\\closure.md",
+    "text": "At first glance, it might seem unintuitive that this code still works. In some programming languages, the local variables within a function exist for just the duration of that function's execution. Once `makeFunc()` finishes executing, you might expect that the `name` variable would no longer be accessible. However, because the code still works, this is obviously not the case in JavaScript."
   },
   "14": {
-    "source": "web-api\\fetch.md",
-    "text": "See also\r\n\r\n- Service Worker API\r\n- Streams API\r\n- CORS\r\n- HTTP\r\n- Fetch examples on GitHub"
+    "source": "guide\\closure.md",
+    "text": "The reason is that functions in JavaScript form closures. A _closure_ is the combination of a function and the lexical environment within which that function was declared. This environment consists of any variables that were in-scope at the time the closure was created. In this case, `myFunc` is a reference to the instance of the function `displayName` that is created when `makeFunc` is run. The i"
   },
   "15": {
-    "source": "web-api\\web-storage.md",
-    "text": "The Web Storage API provides mechanisms by which browsers can securely store key/value pairs.\r\n\r\nThis article provides a walkthrough of how to make use of this technology."
+    "source": "guide\\closure.md",
+    "text": "nstance of `displayName` maintains a reference to its lexical environment, within which the variable `name` exists. For this reason, when `myFunc` is invoked, the variable `name` remains available for use, and \"Mozilla\" is passed to `console.log`."
   },
   "16": {
+    "source": "guide\\closure.md",
+    "text": "Here's a slightly more interesting example—a `makeAdder` function:\n```js\nfunction makeAdder(x) {\nreturn function (y) {\nreturn x + y;\n};\n}\nconst add5 = makeAdder(5);\nconst add10 = makeAdder(10);\nconsole.log(add5(2)); // 7\nconsole.log(add10(2)); // 12\n```"
+  },
+  "17": {
+    "source": "guide\\closure.md",
+    "text": "In this example, we have defined a function `makeAdder(x)`, that takes a single argument `x`, and returns a new function. The function it returns takes a single argument `y`, and returns the sum of `x` and `y`."
+  },
+  "18": {
+    "source": "guide\\closure.md",
+    "text": "In essence, `makeAdder` is a function factory. It creates functions that can add a specific value to their argument. In the above example, the function factory creates two new functions—one that adds five to its argument, and one that adds 10."
+  },
+  "19": {
+    "source": "guide\\closure.md",
+    "text": "`add5` and `add10` both form closures. They share the same function body definition, but store different lexical environments. In `add5`'s lexical environment, `x` is 5, while in the lexical environment for `add10`, `x` is 10.\n## Practical closures"
+  },
+  "20": {
+    "source": "guide\\closure.md",
+    "text": "Closures are useful because they let you associate data (the lexical environment) with a function that operates on that data. This has obvious parallels to object-oriented programming, where objects allow you to associate data (the object's properties) with one or more methods.\nConsequently, you can use a closure anywhere that you might normally use an object with only a single method."
+  },
+  "21": {
+    "source": "guide\\closure.md",
+    "text": "Situations where you might want to do this are particularly common on the web. Much of the code written in front-end JavaScript is event-based. You define some behavior, and then attach it to an event that is triggered by the user (such as a click or a keypress). The code is attached as a callback (a single function that is executed in response to the event)."
+  },
+  "22": {
+    "source": "guide\\closure.md",
+    "text": "For instance, suppose we want to add buttons to a page to adjust the text size. One way of doing this is to specify the font-size of the `body` element (in pixels), and then set the size of the other elements on the page (such as headers) using the relative `em` unit:\n```css\nbody {\nfont-family: \"Helvetica\", \"Arial\", sans-serif;\nfont-size: 12px;\n}\nh1 {\nfont-size: 1.5em;\n}\nh2 {\nfont-size: 1.2em;\n}"
+  },
+  "23": {
+    "source": "guide\\closure.md",
+    "text": "```\nSuch interactive text size buttons can change the `font-size` property of the `body` element, and the adjustments are picked up by other elements on the page thanks to the relative units.\nHere's the JavaScript:\n```js\nfunction makeSizer(size) {\nreturn () => {\ndocument.body.style.fontSize = `${size}px`;\n};\n}\nconst size12 = makeSizer(12);\nconst size14 = makeSizer(14);"
+  },
+  "24": {
+    "source": "guide\\closure.md",
+    "text": "const size16 = makeSizer(16);\n```\n`size12`, `size14`, and `size16` are now functions that resize the body text to 12, 14, and 16 pixels, respectively. You can attach them to buttons as demonstrated in the following code example.\n```js\ndocument.getElementById(\"size-12\").onclick = size12;\ndocument.getElementById(\"size-14\").onclick = size14;\ndocument.getElementById(\"size-16\").onclick = size16;\n```"
+  },
+  "25": {
+    "source": "guide\\closure.md",
+    "text": "```html\n<button id=\"size-12\">12</button>\n<button id=\"size-14\">14</button>\n<button id=\"size-16\">16</button>\n<p>This is some text that will change size when you click the buttons above.</p>\n```\n## Emulating private methods with closures\nLanguages such as Java allow you to declare methods as private, meaning that they can be called only by other methods in the same class."
+  },
+  "26": {
+    "source": "guide\\closure.md",
+    "text": "JavaScript, prior to classes, didn't have a native way of declaring private methods, but it was possible to emulate private methods using closures. Private methods aren't just useful for restricting access to code. They also provide a powerful way of managing your global namespace."
+  },
+  "27": {
+    "source": "guide\\closure.md",
+    "text": "The following code illustrates how to use closures to define public functions that can access private functions and variables. Note that these closures follow the Module Design Pattern.\n```js\nconst counter = (function () {\nlet privateCounter = 0;\nfunction changeBy(val) {\nprivateCounter += val;\n}\nreturn {\nincrement() {\nchangeBy(1);\n},\ndecrement() {\nchangeBy(-1);\n},\nvalue() {\nreturn privateCounter;"
+  },
+  "28": {
+    "source": "guide\\closure.md",
+    "text": "},\n};\n})();\nconsole.log(counter.value()); // 0.\ncounter.increment();\ncounter.increment();\nconsole.log(counter.value()); // 2.\ncounter.decrement();\nconsole.log(counter.value()); // 1.\n```"
+  },
+  "29": {
+    "source": "guide\\closure.md",
+    "text": "In previous examples, each closure had its own lexical environment. Here though, there is a single lexical environment that is shared by the three functions: `counter.increment`, `counter.decrement`, and `counter.value`."
+  },
+  "30": {
+    "source": "guide\\closure.md",
+    "text": "The shared lexical environment is created in the body of an anonymous function, _which is executed as soon as it has been defined_ (also known as an IIFE). The lexical environment contains two private items: a variable called `privateCounter`, and a function called `changeBy`. You can't access either of these private members from outside the anonymous function. Instead, you indirectly access them "
+  },
+  "31": {
+    "source": "guide\\closure.md",
+    "text": "using the three public functions that are returned from the anonymous wrapper."
+  },
+  "32": {
+    "source": "guide\\closure.md",
+    "text": "Those three public functions form closures that share the same lexical environment. Thanks to JavaScript's lexical scoping, they each have access to the `privateCounter` variable and the `changeBy` function.\n```js\nfunction makeCounter() {\nlet privateCounter = 0;\nfunction changeBy(val) {\nprivateCounter += val;\n}\nreturn {\nincrement() {\nchangeBy(1);\n},\ndecrement() {\nchangeBy(-1);\n},\nvalue() {"
+  },
+  "33": {
+    "source": "guide\\closure.md",
+    "text": "return privateCounter;\n},\n};\n}\nconst counter1 = makeCounter();\nconst counter2 = makeCounter();\nconsole.log(counter1.value()); // 0.\ncounter1.increment();\ncounter1.increment();\nconsole.log(counter1.value()); // 2.\ncounter1.decrement();\nconsole.log(counter1.value()); // 1.\nconsole.log(counter2.value()); // 0.\n```"
+  },
+  "34": {
+    "source": "guide\\closure.md",
+    "text": "Notice how the two counters maintain their independence from one another. Each closure references a different version of the `privateCounter` variable through its own closure. Each time one of the counters is called, its lexical environment changes by changing the value of this variable. Changes to the variable value in one closure don't affect the value in the other closure.\n> [!NOTE]"
+  },
+  "35": {
+    "source": "guide\\closure.md",
+    "text": "> Using closures in this way provides benefits that are normally associated with object-oriented programming. In particular, _data hiding_ and _encapsulation_.\n## Closure scope chain\nA nested function's access to the outer function's scope includes the enclosing scope of the outer function—effectively creating a chain of function scopes. To demonstrate, consider the following example code.\n```js"
+  },
+  "36": {
+    "source": "guide\\closure.md",
+    "text": "// global scope\nconst e = 10;\nfunction sum(a) {\nreturn function (b) {\nreturn function (c) {\n// outer functions scope\nreturn function (d) {\n// local scope\nreturn a + b + c + d + e;\n};\n};\n};\n}\nconsole.log(sum(1)(2)(3)(4)); // 20\n```\nYou can also write without anonymous functions:\n```js\n// global scope\nconst e = 10;\nfunction sum(a) {\nreturn function sum2(b) {\nreturn function sum3(c) {"
+  },
+  "37": {
+    "source": "guide\\closure.md",
+    "text": "// outer functions scope\nreturn function sum4(d) {\n// local scope\nreturn a + b + c + d + e;\n};\n};\n};\n}\nconst sum2 = sum(1);\nconst sum3 = sum2(2);\nconst sum4 = sum3(3);\nconst result = sum4(4);\nconsole.log(result); // 20\n```"
+  },
+  "38": {
+    "source": "guide\\closure.md",
+    "text": "In the example above, there's a series of nested functions, all of which have access to the outer functions' scope. In this context, we can say that closures have access to _all_ outer scopes.\nClosures can capture variables in block scopes and module scopes as well. For example, the following creates a closure over the block-scoped variable `y`:\n```js\nfunction outer() {\nlet getY;\n{\nconst y = 6;"
+  },
+  "39": {
+    "source": "guide\\closure.md",
+    "text": "getY = () => y;\n}\nconsole.log(typeof y); // undefined\nconsole.log(getY()); // 6\n}\nouter();\n```\nClosures over modules can be more interesting.\n```js\n// myModule.js\nlet x = 5;\nexport const getX = () => x;\nexport const setX = (val) => {\nx = val;\n};\n```"
+  },
+  "40": {
+    "source": "guide\\closure.md",
+    "text": "Here, the module exports a pair of getter-setter functions, which close over the module-scoped variable `x`. Even when `x` is not directly accessible from other modules, it can be read and written with the functions.\n```js\nimport { getX, setX } from \"./myModule.js\";\nconsole.log(getX()); // 5\nsetX(6);\nconsole.log(getX()); // 6\n```"
+  },
+  "41": {
+    "source": "guide\\closure.md",
+    "text": "Closures can close over imported values as well, which are regarded as _live _, because when the original value changes, the imported one changes accordingly.\n```js\n// myModule.js\nexport let x = 1;\nexport const setX = (val) => {\nx = val;\n};\n```\n```js\n// closureCreator.js\nimport { x } from \"./myModule.js\";\nexport const getX = () => x; // Close over an imported live binding\n```\n```js"
+  },
+  "42": {
+    "source": "guide\\closure.md",
+    "text": "import { getX } from \"./closureCreator.js\";\nimport { setX } from \"./myModule.js\";\nconsole.log(getX()); // 1\nsetX(2);\nconsole.log(getX()); // 2\n```\n## Creating closures in loops: A common mistake\nPrior to the introduction of the `let` keyword, a common problem with closures occurred when you created them inside a loop. To demonstrate, consider the following example code."
+  },
+  "43": {
+    "source": "guide\\closure.md",
+    "text": "```html live-sample___closures_bad\n<p id=\"help\">Helpful notes will appear here</p>\n<p>Email: <input type=\"text\" id=\"email\" name=\"email\" /></p>\n<p>Name: <input type=\"text\" id=\"name\" name=\"name\" /></p>\n<p>Age: <input type=\"text\" id=\"age\" name=\"age\" /></p>\n```\n```js example-bad live-sample___closures_bad\nfunction showHelp(help) {\ndocument.getElementById(\"help\").textContent = help;\n}"
+  },
+  "44": {
+    "source": "guide\\closure.md",
+    "text": "function setupHelp() {\nvar helpText = [\n{ id: \"email\", help: \"Your email address\" },\n{ id: \"name\", help: \"Your full name\" },\n{ id: \"age\", help: \"Your age (you must be over 16)\" },\n];\nfor (var i = 0; i < helpText.length; i++) {\n// Culprit is the use of `var` on this line\nvar item = helpText[i];\ndocument.getElementById(item.id).onfocus = function () {\nshowHelp(item.help);\n};\n}\n}\nsetupHelp();\n```"
+  },
+  "45": {
+    "source": "guide\\closure.md",
+    "text": "The `helpText` array defines three helpful hints, each associated with the ID of an input field in the document. The loop cycles through these definitions, hooking up an `onfocus` event to each one that shows the associated help method.\nIf you try this code out, you'll see that it doesn't work as expected. No matter what field you focus on, the message about your age will be displayed."
+  },
+  "46": {
+    "source": "guide\\closure.md",
+    "text": "The reason for this is that the functions assigned to `onfocus` form closures; they consist of the function definition and the captured environment from the `setupHelp` function's scope. Three closures have been created by the loop, but each one shares the same single lexical environment, which has a variable with changing values (`item`). This is because the variable `item` is declared with `var`"
+  },
+  "47": {
+    "source": "guide\\closure.md",
+    "text": " and thus has function scope due to hoisting. The value of `item.help` is determined when the `onfocus` callbacks are executed. Because the loop has already run its course by that time, the `item` variable object (shared by all three closures) has been left pointing to the last entry in the `helpText` list."
+  },
+  "48": {
+    "source": "guide\\closure.md",
+    "text": "One solution in this case is to use more closures: in particular, to use a function factory as described earlier:\n```html hidden live-sample___closures_factory\n<p id=\"help\">Helpful notes will appear here</p>\n<p>Email: <input type=\"text\" id=\"email\" name=\"email\" /></p>\n<p>Name: <input type=\"text\" id=\"name\" name=\"name\" /></p>\n<p>Age: <input type=\"text\" id=\"age\" name=\"age\" /></p>\n```"
+  },
+  "49": {
+    "source": "guide\\closure.md",
+    "text": "```js live-sample___closures_factory\nfunction showHelp(help) {\ndocument.getElementById(\"help\").textContent = help;\n}\nfunction makeHelpCallback(help) {\nreturn function () {\nshowHelp(help);\n};\n}\nfunction setupHelp() {\nvar helpText = [\n{ id: \"email\", help: \"Your email address\" },\n{ id: \"name\", help: \"Your full name\" },\n{ id: \"age\", help: \"Your age (you must be over 16)\" },\n];"
+  },
+  "50": {
+    "source": "guide\\closure.md",
+    "text": "for (var i = 0; i < helpText.length; i++) {\nvar item = helpText[i];\ndocument.getElementById(item.id).onfocus = makeHelpCallback(item.help);\n}\n}\nsetupHelp();\n```"
+  },
+  "51": {
+    "source": "guide\\closure.md",
+    "text": "This works as expected. Rather than the callbacks all sharing a single lexical environment, the `makeHelpCallback` function creates _a new lexical environment_ for each callback, in which `help` refers to the corresponding string from the `helpText` array.\nOne other way to write the above using anonymous closures is:\n```js\nfunction showHelp(help) {"
+  },
+  "52": {
+    "source": "guide\\closure.md",
+    "text": "document.getElementById(\"help\").textContent = help;\n}\nfunction setupHelp() {\nvar helpText = [\n{ id: \"email\", help: \"Your email address\" },\n{ id: \"name\", help: \"Your full name\" },\n{ id: \"age\", help: \"Your age (you must be over 16)\" },\n];\nfor (var i = 0; i < helpText.length; i++) {\n(function () {\nvar item = helpText[i];\ndocument.getElementById(item.id).onfocus = function () {\nshowHelp(item.help);\n};"
+  },
+  "53": {
+    "source": "guide\\closure.md",
+    "text": "})(); // Immediate event listener attachment with the current value of item (preserved until iteration).\n}\n}\nsetupHelp();\n```\nIf you don't want to use more closures, you can use the `let` or `const` keyword:\n```js\nfunction showHelp(help) {\ndocument.getElementById(\"help\").textContent = help;\n}\nfunction setupHelp() {\nconst helpText = [\n{ id: \"email\", help: \"Your email address\" },"
+  },
+  "54": {
+    "source": "guide\\closure.md",
+    "text": "{ id: \"name\", help: \"Your full name\" },\n{ id: \"age\", help: \"Your age (you must be over 16)\" },\n];\nfor (let i = 0; i < helpText.length; i++) {\nconst item = helpText[i];\ndocument.getElementById(item.id).onfocus = () => {\nshowHelp(item.help);\n};\n}\n}\nsetupHelp();\n```"
+  },
+  "55": {
+    "source": "guide\\closure.md",
+    "text": "This example uses `const` instead of `var`, so every closure binds the block-scoped variable, meaning that no additional closures are required.\nIf you are writing modern JavaScript anyway, you can consider more alternatives to the plain `for` loop, such as using  loop and declaring `item` as `let` or `const`, or using the  method, which both avoid the closure problem.\n```js"
+  },
+  "56": {
+    "source": "guide\\closure.md",
+    "text": "for (const item of helpText) {\ndocument.getElementById(item.id).onfocus = () => {\ndocument.getElementById(\"help\").textContent = item.help;\n};\n}\nhelpText.forEach((item) => {\ndocument.getElementById(item.id).onfocus = () => {\nshowHelp(item.help);\n};\n});\n```\n## Performance considerations"
+  },
+  "57": {
+    "source": "guide\\closure.md",
+    "text": "As mentioned previously, each function instance manages its own scope and closure. Therefore, it is unwise to unnecessarily create functions within other functions if closures are not needed for a particular task, as it will negatively affect script performance both in terms of processing speed and memory consumption."
+  },
+  "58": {
+    "source": "guide\\closure.md",
+    "text": "For instance, when creating a new object/class, methods should normally be associated to the object's prototype rather than defined into the object constructor. The reason is that whenever the constructor is called, the methods would get reassigned (that is, for every object creation).\nConsider the following case:\n```js\nfunction MyObject(name, message) {\nthis.name = name.toString();"
+  },
+  "59": {
+    "source": "guide\\closure.md",
+    "text": "this.message = message.toString();\nthis.getName = function () {\nreturn this.name;\n};\nthis.getMessage = function () {\nreturn this.message;\n};\n}\n```\nBecause the previous code does not take advantage of the benefits of using closures in this particular instance, we could instead rewrite it to avoid using closures as follows:\n```js\nfunction MyObject(name, message) {\nthis.name = name.toString();"
+  },
+  "60": {
+    "source": "guide\\closure.md",
+    "text": "this.message = message.toString();\n}\nMyObject.prototype = {\ngetName() {\nreturn this.name;\n},\ngetMessage() {\nreturn this.message;\n},\n};\n```\nHowever, redefining the prototype is not recommended. The following example instead appends to the existing prototype:\n```js\nfunction MyObject(name, message) {\nthis.name = name.toString();\nthis.message = message.toString();\n}"
+  },
+  "61": {
+    "source": "guide\\closure.md",
+    "text": "MyObject.prototype.getName = function () {\nreturn this.name;\n};\nMyObject.prototype.getMessage = function () {\nreturn this.message;\n};\n```\nIn the two previous examples, the inherited prototype can be shared by all objects and the method definitions need not occur at every object creation. See Inheritance and the prototype chain for more."
+  },
+  "62": {
+    "source": "guide\\using-promises.md",
+    "text": "A  is an object representing the eventual completion or failure of an asynchronous operation. Since most people are consumers of already-created promises, this guide will explain consumption of returned promises before explaining how to create them."
+  },
+  "63": {
+    "source": "guide\\using-promises.md",
+    "text": "Essentially, a promise is a returned object to which you attach callbacks, instead of passing callbacks into a function. Imagine a function, `createAudioFileAsync()`, which asynchronously generates a sound file given a configuration record and two callback functions: one called if the audio file is successfully created, and the other called if an error occurs."
+  },
+  "64": {
+    "source": "guide\\using-promises.md",
+    "text": "Here's some code that uses `createAudioFileAsync()`:\n```js\nfunction successCallback(result) {\nconsole.log(`Audio file ready at URL: ${result}`);\n}\nfunction failureCallback(error) {\nconsole.error(`Error generating audio file: ${error}`);\n}\ncreateAudioFileAsync(audioSettings, successCallback, failureCallback);\n```"
+  },
+  "65": {
+    "source": "guide\\using-promises.md",
+    "text": "If `createAudioFileAsync()` were rewritten to return a promise, you would attach your callbacks to it instead:\n```js\ncreateAudioFileAsync(audioSettings).then(successCallback, failureCallback);\n```\nThis convention has several advantages. We will explore each one.\n## Chaining"
+  },
+  "66": {
+    "source": "guide\\using-promises.md",
+    "text": "A common need is to execute two or more asynchronous operations back to back, where each subsequent operation starts when the previous operation succeeds, with the result from the previous step. In the old days, doing several asynchronous operations in a row would lead to the classic callback hell:\n```js-nolint\ndoSomething(function (result) {\ndoSomethingElse(result, function (newResult) {"
+  },
+  "67": {
+    "source": "guide\\using-promises.md",
+    "text": "doThirdThing(newResult, function (finalResult) {\nconsole.log(`Got the final result: ${finalResult}`);\n}, failureCallback);\n}, failureCallback);\n}, failureCallback);\n```\nWith promises, we accomplish this by creating a promise chain. The API design of promises makes this great, because callbacks are attached to the returned promise object, instead of being passed into a function."
+  },
+  "68": {
+    "source": "guide\\using-promises.md",
+    "text": "Here's the magic: the `then()` function returns a **new promise**, different from the original:\n```js\nconst promise = doSomething();\nconst promise2 = promise.then(successCallback, failureCallback);\n```"
+  },
+  "69": {
+    "source": "guide\\using-promises.md",
+    "text": "This second promise (`promise2`) represents the completion not just of `doSomething()`, but also of the `successCallback` or `failureCallback` you passed in — which can be other asynchronous functions returning a promise. When that's the case, any callbacks added to `promise2` get queued behind the promise returned by either `successCallback` or `failureCallback`.\n> [!NOTE]"
+  },
+  "70": {
+    "source": "guide\\using-promises.md",
+    "text": "> If you want a working example to play with, you can use the following template to create any function returning a promise:\n>\n> ```js\n> function doSomething() {\n>   return new Promise((resolve) => {\n>     setTimeout(() => {\n>       // Other things to do before completion of the promise\n>       console.log(\"Did something\");\n>       // The fulfillment value of the promise"
+  },
+  "71": {
+    "source": "guide\\using-promises.md",
+    "text": ">       resolve(\"https://example.com/\");\n>     }, 200);\n>   });\n> }\n> ```\n>\n> The implementation is discussed in the Creating a Promise around an old callback API section below."
+  },
+  "72": {
+    "source": "guide\\using-promises.md",
+    "text": "With this pattern, you can create longer chains of processing, where each promise represents the completion of one asynchronous step in the chain. In addition, the arguments to `then` are optional, and `catch(failureCallback)` is short for `then(null, failureCallback)` — so if your error handling code is the same for all steps, you can attach it to the end of the chain:\n```js\ndoSomething()"
+  },
+  "73": {
+    "source": "guide\\using-promises.md",
+    "text": ".then(function (result) {\nreturn doSomethingElse(result);\n})\n.then(function (newResult) {\nreturn doThirdThing(newResult);\n})\n.then(function (finalResult) {\nconsole.log(`Got the final result: ${finalResult}`);\n})\n.catch(failureCallback);\n```\nYou might see this expressed with arrow functions instead:\n```js\ndoSomething()\n.then((result) => doSomethingElse(result))"
+  },
+  "74": {
+    "source": "guide\\using-promises.md",
+    "text": ".then((newResult) => doThirdThing(newResult))\n.then((finalResult) => {\nconsole.log(`Got the final result: ${finalResult}`);\n})\n.catch(failureCallback);\n```\n> [!NOTE]\n> Arrow function expressions can have an implicit return; so, `() => x` is short for `() => { return x; }`."
+  },
+  "75": {
+    "source": "guide\\using-promises.md",
+    "text": "`doSomethingElse` and `doThirdThing` can return any value — if they return promises, that promise is first waited until it settles, and the next callback receives the fulfillment value, not the promise itself. It is important to always return promises from `then` callbacks, even if the promise always resolves to `undefined`. If the previous handler started a promise but did not return it, there's "
+  },
+  "76": {
+    "source": "guide\\using-promises.md",
+    "text": "no way to track its settlement anymore, and the promise is said to be \"floating\"."
+  },
+  "77": {
+    "source": "guide\\using-promises.md",
+    "text": "```js example-bad\ndoSomething()\n.then((url) => {\n// Missing `return` keyword in front of fetch(url).\nfetch(url);\n})\n.then((result) => {\n// result is undefined, because nothing is returned from the previous\n// handler. There's no way to know the return value of the fetch()\n// call anymore, or whether it succeeded at all.\n});\n```"
+  },
+  "78": {
+    "source": "guide\\using-promises.md",
+    "text": "By returning the result of the `fetch` call (which is a promise), we can both track its completion and receive its value when it completes.\n```js example-good\ndoSomething()\n.then((url) => {\n// `return` keyword added\nreturn fetch(url);\n})\n.then((result) => {\n// result is a Response object\n});\n```"
+  },
+  "79": {
+    "source": "guide\\using-promises.md",
+    "text": "Floating promises could be worse if you have race conditions — if the promise from the last handler is not returned, the next `then` handler will be called early, and any value it reads may be incomplete.\n```js example-bad\nconst listOfIngredients = [];\ndoSomething()\n.then((url) => {\n// Missing `return` keyword in front of fetch(url).\nfetch(url)\n.then((res) => res.json())\n.then((data) => {"
+  },
+  "80": {
+    "source": "guide\\using-promises.md",
+    "text": "listOfIngredients.push(data);\n});\n})\n.then(() => {\nconsole.log(listOfIngredients);\n// listOfIngredients will always be [], because the fetch request hasn't completed yet.\n});\n```\nTherefore, as a rule of thumb, whenever your operation encounters a promise, return it and defer its handling to the next `then` handler.\n```js example-good\nconst listOfIngredients = [];\ndoSomething()\n.then((url) => {"
+  },
+  "81": {
+    "source": "guide\\using-promises.md",
+    "text": "// `return` keyword now included in front of fetch call.\nreturn fetch(url)\n.then((res) => res.json())\n.then((data) => {\nlistOfIngredients.push(data);\n});\n})\n.then(() => {\nconsole.log(listOfIngredients);\n// listOfIngredients will now contain data from fetch call.\n});\n```"
+  },
+  "82": {
+    "source": "guide\\using-promises.md",
+    "text": "Even better, you can flatten the nested chain into a single chain, which is simpler and makes error handling easier. The details are discussed in the Nesting section below.\n```js\ndoSomething()\n.then((url) => fetch(url))\n.then((res) => res.json())\n.then((data) => {\nlistOfIngredients.push(data);\n})\n.then(() => {\nconsole.log(listOfIngredients);\n});\n```"
+  },
+  "83": {
+    "source": "guide\\using-promises.md",
+    "text": "Using `async`/`await` can help you write code that's more intuitive and resembles synchronous code. Below is the same example using `async`/`await`:\n```js\nasync function logIngredients() {\nconst url = await doSomething();\nconst res = await fetch(url);\nconst data = await res.json();\nlistOfIngredients.push(data);\nconsole.log(listOfIngredients);\n}\n```"
+  },
+  "84": {
+    "source": "guide\\using-promises.md",
+    "text": "Note how the code looks exactly like synchronous code, except for the `await` keywords in front of promises. One of the only tradeoffs is that it may be easy to forget the `await` keyword, which can only be fixed when there's a type mismatch (e.g., trying to use a promise as a value)."
+  },
+  "85": {
+    "source": "guide\\using-promises.md",
+    "text": "`async`/`await` builds on promises — for example, `doSomething()` is the same function as before, so there's minimal refactoring needed to change from promises to `async`/`await`. You can read more about the `async`/`await` syntax in the async functions and `await` references.\n> [!NOTE]"
+  },
+  "86": {
+    "source": "guide\\using-promises.md",
+    "text": "> `async`/`await` has the same concurrency semantics as normal promise chains. `await` within one async function does not stop the entire program, only the parts that depend on its value, so other async jobs can still run while the `await` is pending.\n## Error handling"
+  },
+  "87": {
+    "source": "guide\\using-promises.md",
+    "text": "You might recall seeing `failureCallback` three times in the pyramid of doom earlier, compared to only once at the end of the promise chain:\n```js\ndoSomething()\n.then((result) => doSomethingElse(result))\n.then((newResult) => doThirdThing(newResult))\n.then((finalResult) => console.log(`Got the final result: ${finalResult}`))\n.catch(failureCallback);\n```"
+  },
+  "88": {
+    "source": "guide\\using-promises.md",
+    "text": "If there's an exception, the browser will look down the chain for `.catch()` handlers or `onRejected`. This is very much modeled after how synchronous code works:\n```js\ntry {\nconst result = syncDoSomething();\nconst newResult = syncDoSomethingElse(result);\nconst finalResult = syncDoThirdThing(newResult);\nconsole.log(`Got the final result: ${finalResult}`);\n} catch (error) {\nfailureCallback(error);"
+  },
+  "89": {
+    "source": "guide\\using-promises.md",
+    "text": "}\n```\nThis symmetry with asynchronous code culminates in the `async`/`await` syntax:\n```js\nasync function foo() {\ntry {\nconst result = await doSomething();\nconst newResult = await doSomethingElse(result);\nconst finalResult = await doThirdThing(newResult);\nconsole.log(`Got the final result: ${finalResult}`);\n} catch (error) {\nfailureCallback(error);\n}\n}\n```"
+  },
+  "90": {
+    "source": "guide\\using-promises.md",
+    "text": "Promises solve a fundamental flaw with the callback pyramid of doom, by catching all errors, even thrown exceptions and programming errors. This is essential for functional composition of asynchronous operations. All errors are now handled by the `catch()` method at the end of the chain, and you should almost never need to use `try`/`catch` without using `async`/`await`.\n### Nesting"
+  },
+  "91": {
+    "source": "guide\\using-promises.md",
+    "text": "In the examples above involving `listOfIngredients`, the first one has one promise chain nested in the return value of another `then()` handler, while the second one uses an entirely flat chain. Simple promise chains are best kept flat without nesting, as nesting can be a result of careless composition."
+  },
+  "92": {
+    "source": "guide\\using-promises.md",
+    "text": "Nesting is a control structure to limit the scope of `catch` statements. Specifically, a nested `catch` only catches failures in its scope and below, not errors higher up in the chain outside the nested scope. When used correctly, this gives greater precision in error recovery:\n```js\ndoSomethingCritical()\n.then((result) =>\ndoSomethingOptional(result)"
+  },
+  "93": {
+    "source": "guide\\using-promises.md",
+    "text": ".then((optionalResult) => doSomethingExtraNice(optionalResult))\n.catch((e) => {}),\n) // Ignore if optional stuff fails; proceed.\n.then(() => moreCriticalStuff())\n.catch((e) => console.error(`Critical failure: ${e.message}`));\n```\nNote that the optional steps here are nested — with the nesting caused not by the indentation, but by the placement of the outer `(` and `)` parentheses around the steps."
+  },
+  "94": {
+    "source": "guide\\using-promises.md",
+    "text": "The inner error-silencing `catch` handler only catches failures from `doSomethingOptional()` and `doSomethingExtraNice()`, after which the code resumes with `moreCriticalStuff()`. Importantly, if `doSomethingCritical()` fails, its error is caught by the final (outer) `catch` only, and does not get swallowed by the inner `catch` handler.\nIn `async`/`await`, this code looks like:\n```js"
+  },
+  "95": {
+    "source": "guide\\using-promises.md",
+    "text": "async function main() {\ntry {\nconst result = await doSomethingCritical();\ntry {\nconst optionalResult = await doSomethingOptional(result);\nawait doSomethingExtraNice(optionalResult);\n} catch (e) {\n// Ignore failures in optional steps and proceed.\n}\nawait moreCriticalStuff();\n} catch (e) {\nconsole.error(`Critical failure: ${e.message}`);\n}\n}\n```\n> [!NOTE]"
+  },
+  "96": {
+    "source": "guide\\using-promises.md",
+    "text": "> If you don't have sophisticated error handling, you very likely don't need nested `then` handlers. Instead, use a flat chain and put the error handling logic at the end.\n### Chaining after a catch\nIt's possible to chain _after_ a failure, i.e., a `catch`, which is useful to accomplish new actions even after an action failed in the chain. Read the following example:\n```js\ndoSomething()"
+  },
+  "97": {
+    "source": "guide\\using-promises.md",
+    "text": ".then(() => {\nthrow new Error(\"Something failed\");\nconsole.log(\"Do this\");\n})\n.catch(() => {\nconsole.error(\"Do that\");\n})\n.then(() => {\nconsole.log(\"Do this, no matter what happened before\");\n});\n```\nThis will output the following text:\n```plain\nDo that\nDo this, no matter what happened before\n```\n> [!NOTE]"
+  },
+  "98": {
+    "source": "guide\\using-promises.md",
+    "text": "> The text \"Do this\" is not displayed because the \"Something failed\" error caused a rejection.\nIn `async`/`await`, this code looks like:\n```js\nasync function main() {\ntry {\nawait doSomething();\nthrow new Error(\"Something failed\");\nconsole.log(\"Do this\");\n} catch (e) {\nconsole.error(\"Do that\");\n}\nconsole.log(\"Do this, no matter what happened before\");\n}\n```\n### Promise rejection events"
+  },
+  "99": {
+    "source": "guide\\using-promises.md",
+    "text": "If a promise rejection event is not handled by any handler, it bubbles to the top of the call stack, and the host needs to surface it. On the web, whenever a promise is rejected, one of two events is sent to the global scope (generally, this is either the `window` or, if being used in a web worker, it's the `Worker` or other worker-based interface). The two events are:\n- `unhandledrejection`"
+  },
+  "100": {
+    "source": "guide\\using-promises.md",
+    "text": "- : Sent when a promise is rejected but there is no rejection handler available.\n- `rejectionhandled`\n- : Sent when a handler is attached to a rejected promise that has already caused an `unhandledrejection` event."
+  },
+  "101": {
+    "source": "guide\\using-promises.md",
+    "text": "In both cases, the event (of type `PromiseRejectionEvent`) has as members a `promise` property indicating the promise that was rejected, and a `reason` property that provides the reason given for the promise to be rejected."
+  },
+  "102": {
+    "source": "guide\\using-promises.md",
+    "text": "These make it possible to offer fallback error handling for promises, as well as to help debug issues with your promise management. These handlers are global per context, so all errors will go to the same event handlers, regardless of source."
+  },
+  "103": {
+    "source": "guide\\using-promises.md",
+    "text": "In Node.js, handling promise rejection is slightly different. You capture unhandled rejections by adding a handler for the Node.js `unhandledRejection` event (notice the difference in capitalization of the name), like this:\n```js\nprocess.on(\"unhandledRejection\", (reason, promise) => {\n// Add code here to examine the \"promise\" and \"reason\" values\n});\n```"
+  },
+  "104": {
+    "source": "guide\\using-promises.md",
+    "text": "For Node.js, to prevent the error from being logged to the console (the default action that would otherwise occur), adding that `process.on()` listener is all that's necessary; there's no need for an equivalent of the browser runtime's `preventDefault()` method."
+  },
+  "105": {
+    "source": "guide\\using-promises.md",
+    "text": "However, if you add that `process.on` listener but don't also have code within it to handle rejected promises, they will just be dropped on the floor and silently ignored. So ideally, you should add code within that listener to examine each rejected promise and make sure it was not caused by an actual code bug.\n## Composition"
+  },
+  "106": {
+    "source": "guide\\using-promises.md",
+    "text": "There are four composition tools for running asynchronous operations concurrently: , , , and .\nWe can start operations at the same time and wait for them all to finish like this:\n```js\nPromise.all([func1(), func2(), func3()]).then(([result1, result2, result3]) => {\n// use result1, result2 and result3\n});\n```"
+  },
+  "107": {
+    "source": "guide\\using-promises.md",
+    "text": "If one of the promises in the array rejects, `Promise.all()` immediately rejects the returned promise. The other operations continue to run, but their outcomes are not available via the return value of `Promise.all()`. This may cause unexpected state or behavior.  is another composition tool that ensures all operations are complete before resolving."
+  },
+  "108": {
+    "source": "guide\\using-promises.md",
+    "text": "These methods all run promises concurrently — a sequence of promises are started simultaneously and do not wait for each other. Sequential composition is possible using some clever JavaScript:\n```js\n[func1, func2, func3]\n.reduce((p, f) => p.then(f), Promise.resolve())\n.then((result3) => {\n/* use result3 */\n});\n```"
+  },
+  "109": {
+    "source": "guide\\using-promises.md",
+    "text": "In this example, we reduce an array of asynchronous functions down to a promise chain. The code above is equivalent to:\n```js\nPromise.resolve()\n.then(func1)\n.then(func2)\n.then(func3)\n.then((result3) => {\n/* use result3 */\n});\n```\nThis can be made into a reusable compose function, which is common in functional programming:\n```js\nconst applyAsync = (acc, val) => acc.then(val);\nconst composeAsync ="
+  },
+  "110": {
+    "source": "guide\\using-promises.md",
+    "text": "(...funcs) =>\n(x) =>\nfuncs.reduce(applyAsync, Promise.resolve(x));\n```\nThe `composeAsync()` function accepts any number of functions as arguments and returns a new function that accepts an initial value to be passed through the composition pipeline:\n```js\nconst transformData = composeAsync(func1, func2, func3);\nconst result3 = transformData(data);\n```"
+  },
+  "111": {
+    "source": "guide\\using-promises.md",
+    "text": "Sequential composition can also be done more succinctly with async/await:\n```js\nlet result;\nfor (const f of [func1, func2, func3]) {\nresult = await f(result);\n}\n/* use last result (i.e. result3) */\n```"
+  },
+  "112": {
+    "source": "guide\\using-promises.md",
+    "text": "However, before you compose promises sequentially, consider if it's really necessary — it's always better to run promises concurrently so that they don't unnecessarily block each other unless one promise's execution depends on another's result.\n## Cancellation"
+  },
+  "113": {
+    "source": "guide\\using-promises.md",
+    "text": "`Promise` itself has no first-class protocol for cancellation, but you may be able to directly cancel the underlying asynchronous operation, typically using `AbortController`.\n## Creating a Promise around an old callback API\nA  can be created from scratch using its constructor. This should be needed only to wrap old APIs."
+  },
+  "114": {
+    "source": "guide\\using-promises.md",
+    "text": "In an ideal world, all asynchronous functions would already return promises. Unfortunately, some APIs still expect success and/or failure callbacks to be passed in the old way. The most obvious example is the  function:\n```js\nsetTimeout(() => saySomething(\"10 seconds passed\"), 10 * 1000);\n```"
+  },
+  "115": {
+    "source": "guide\\using-promises.md",
+    "text": "Mixing old-style callbacks and promises is problematic. If `saySomething()` fails or contains a programming error, nothing catches it. This is intrinsic to the design of `setTimeout()`.\nLuckily we can wrap `setTimeout()` in a promise. The best practice is to wrap the callback-accepting functions at the lowest possible level, and then never call them directly again:\n```js"
+  },
+  "116": {
+    "source": "guide\\using-promises.md",
+    "text": "const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\nwait(10 * 1000)\n.then(() => saySomething(\"10 seconds\"))\n.catch(failureCallback);\n```"
+  },
+  "117": {
+    "source": "guide\\using-promises.md",
+    "text": "The promise constructor takes an executor function that lets us resolve or reject a promise manually. Since `setTimeout()` doesn't really fail, we left out reject in this case. For more information on how the executor function works, see the `Promise()` reference.\n## Timing\nLastly, we will look into the more technical details, about when the registered callbacks get called.\n### Guarantees"
+  },
+  "118": {
+    "source": "guide\\using-promises.md",
+    "text": "In the callback-based API, when and how the callback gets called depends on the API implementor. For example, the callback may be called synchronously or asynchronously:\n```js example-bad\nfunction doSomething(callback) {\nif (Math.random() > 0.5) {\ncallback();\n} else {\nsetTimeout(() => callback(), 1000);\n}\n}\n```"
+  },
+  "119": {
+    "source": "guide\\using-promises.md",
+    "text": "The above design is strongly discouraged because it leads to the so-called \"state of Zalgo\". In the context of designing asynchronous APIs, this means a callback is called synchronously in some cases but asynchronously in other cases, creating ambiguity for the caller. For further background, see the article Designing APIs for Asynchrony, where the term was first formally presented. This API desig"
+  },
+  "120": {
+    "source": "guide\\using-promises.md",
+    "text": "n makes side effects hard to analyze:"
+  },
+  "121": {
+    "source": "guide\\using-promises.md",
+    "text": "```js\nlet value = 1;\ndoSomething(() => {\nvalue = 2;\n});\nconsole.log(value); // 1 or 2?\n```"
+  },
+  "122": {
+    "source": "guide\\using-promises.md",
+    "text": "On the other hand, promises are a form of inversion of control — the API implementor does not control when the callback gets called. Instead, the job of maintaining the callback queue and deciding when to call the callbacks is delegated to the promise implementation, and both the API user and API developer automatically gets strong semantic guarantees, including:"
+  },
+  "123": {
+    "source": "guide\\using-promises.md",
+    "text": "- Callbacks added with `then()` will never be invoked before the completion of the current run of the JavaScript event loop.\n- These callbacks will be invoked even if they were added _after_ the success or failure of the asynchronous operation that the promise represents."
+  },
+  "124": {
+    "source": "guide\\using-promises.md",
+    "text": "- Multiple callbacks may be added by calling `then()` several times. They will be invoked one after another, in the order in which they were inserted.\nTo avoid surprises, functions passed to `then()` will never be called synchronously, even with an already-resolved promise:\n```js\nPromise.resolve().then(() => console.log(2));\nconsole.log(1);\n// Logs: 1, 2\n```"
+  },
+  "125": {
+    "source": "guide\\using-promises.md",
+    "text": "Instead of running immediately, the passed-in function is put on a microtask queue, which means it runs later (only after the function which created it exits, and when the JavaScript execution stack is empty), just before control is returned to the event loop; i.e., pretty soon:\n```js\nconst wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\nwait(0).then(() => console.log(4));"
+  },
+  "126": {
+    "source": "guide\\using-promises.md",
+    "text": "Promise.resolve()\n.then(() => console.log(2))\n.then(() => console.log(3));\nconsole.log(1); // 1, 2, 3, 4\n```\n### Task queues vs. microtasks\nPromise callbacks are handled as a microtask whereas  callbacks are handled as task queues.\n```js\nconst promise = new Promise((resolve, reject) => {\nconsole.log(\"Promise callback\");\nresolve();\n}).then((result) => {\nconsole.log(\"Promise callback (.then)\");\n});"
+  },
+  "127": {
+    "source": "guide\\using-promises.md",
+    "text": "setTimeout(() => {\nconsole.log(\"event-loop cycle: Promise (fulfilled)\", promise);\n}, 0);\nconsole.log(\"Promise (pending)\", promise);\n```\nThe code above will output:\n```plain\nPromise callback\nPromise (pending) Promise {<pending>}\nPromise callback (.then)\nevent-loop cycle: Promise (fulfilled) Promise {<fulfilled>}\n```\nFor more details, refer to Tasks vs. microtasks."
+  },
+  "128": {
+    "source": "guide\\using-promises.md",
+    "text": "### When promises and tasks collide\nIf you run into situations in which you have promises and tasks (such as events or callbacks) which are firing in unpredictable orders, it's possible you may benefit from using a microtask to check status or balance out your promises when promises are created conditionally."
+  },
+  "129": {
+    "source": "guide\\using-promises.md",
+    "text": "If you think microtasks may help solve this problem, see the microtask guide to learn more about how to use  to enqueue a function as a microtask.\n## See also\n-\n-\n-\n- Promises/A+ specification\n- We have a problem with promises on pouchdb.com (2015)"
+  },
+  "130": {
+    "source": "javascript\\array-map.md",
+    "text": "The **`map()`** method of  instances creates\na new array populated with the results of calling a provided function on\nevery element in the calling array.\n```js\nconst array = [1, 4, 9, 16];\n// Pass a function to map\nconst mapped = array.map((x) => x * 2);\nconsole.log(mapped);\n// Expected output: Array [2, 8, 18, 32]\n```\n## Syntax\n```js-nolint\nmap(callbackFn)\nmap(callbackFn, thisArg)\n```"
+  },
+  "131": {
+    "source": "javascript\\array-map.md",
+    "text": "### Parameters\n- `callbackFn`\n- : A function to execute for each element in the array. Its return value is added as a single element in the new array. The function is called with the following arguments:\n- `element`\n- : The current element being processed in the array.\n- `index`\n- : The index of the current element being processed in the array.\n- `array`\n- : The array `map()` was called upon."
+  },
+  "132": {
+    "source": "javascript\\array-map.md",
+    "text": "- `thisArg`\n- : A value to use as `this` when executing `callbackFn`. See iterative methods.\n### Return value\nA new array with each element being the result of the callback function.\n## Description"
+  },
+  "133": {
+    "source": "javascript\\array-map.md",
+    "text": "The `map()` method is an iterative method. It calls a provided `callbackFn` function once for each element in an array and constructs a new array from the results. Read the iterative methods section for more information about how these methods work in general.\n`callbackFn` is invoked only for array indexes which have assigned values. It is not invoked for empty slots in sparse arrays."
+  },
+  "134": {
+    "source": "javascript\\array-map.md",
+    "text": "The `map()` method is generic. It only expects the `this` value to have a `length` property and integer-keyed properties.\nSince `map` builds a new array, calling it without using the returned array is an anti-pattern; use  or  instead.\n## Examples\n### Mapping an array of numbers to an array of square roots"
+  },
+  "135": {
+    "source": "javascript\\array-map.md",
+    "text": "The following code takes an array of numbers and creates a new array containing the square roots of the numbers in the first array.\n```js\nconst numbers = [1, 4, 9];\nconst roots = numbers.map((num) => Math.sqrt(num));\n// roots is now     [1, 2, 3]\n// numbers is still [1, 4, 9]\n```\n### Using map to reformat objects in an array"
+  },
+  "136": {
+    "source": "javascript\\array-map.md",
+    "text": "The following code takes an array of objects and creates a new array containing the newly reformatted objects.\n```js\nconst kvArray = [\n{ key: 1, value: 10 },\n{ key: 2, value: 20 },\n{ key: 3, value: 30 },\n];\nconst reformattedArray = kvArray.map(({ key, value }) => ({ [key]: value }));\nconsole.log(reformattedArray); // [{ 1: 10 }, { 2: 20 }, { 3: 30 }]\nconsole.log(kvArray);\n// ["
+  },
+  "137": {
+    "source": "javascript\\array-map.md",
+    "text": "//   { key: 1, value: 10 },\n//   { key: 2, value: 20 },\n//   { key: 3, value: 30 }\n// ]\n```\n### Using parseInt() with map()\nIt is common to use the callback with one argument (the element being traversed). Certain functions are also commonly used with one argument, even though they take additional optional arguments. These habits may lead to confusing behaviors. Consider:\n```js"
+  },
+  "138": {
+    "source": "javascript\\array-map.md",
+    "text": "[\"1\", \"2\", \"3\"].map(parseInt);\n```\nWhile one might expect `[1, 2, 3]`, the actual result is `[1, NaN, NaN]`."
+  },
+  "139": {
+    "source": "javascript\\array-map.md",
+    "text": "is often used with one argument, but takes two. The first is an expression and the second is the radix to the callback function, `Array.prototype.map` passes 3 arguments: the element, the index, and the array. The third argument is ignored by  — but _not_ the second one! This is the source of possible confusion.\nHere is a concise example of the iteration steps:\n```js"
+  },
+  "140": {
+    "source": "javascript\\array-map.md",
+    "text": "/* first iteration  (index is 0): */ parseInt(\"1\", 0); // 1\n/* second iteration (index is 1): */ parseInt(\"2\", 1); // NaN\n/* third iteration  (index is 2): */ parseInt(\"3\", 2); // NaN\n```\nTo solve this, define another function that only takes one argument:\n```js\n[\"1\", \"2\", \"3\"].map((str) => parseInt(str, 10)); // [1, 2, 3]\n```\nYou can also use the  function, which only takes one argument:\n```js"
+  },
+  "141": {
+    "source": "javascript\\array-map.md",
+    "text": "[\"1\", \"2\", \"3\"].map(Number); // [1, 2, 3]\n// But unlike parseInt(), Number() will also return a float or (resolved) exponential notation:\n[\"1.1\", \"2.2e2\", \"3e300\"].map(Number); // [1.1, 220, 3e+300]\n// For comparison, if we use parseInt() on the array above:\n[\"1.1\", \"2.2e2\", \"3e300\"].map((str) => parseInt(str, 10)); // [1, 2, 3]\n```"
+  },
+  "142": {
+    "source": "javascript\\array-map.md",
+    "text": "See A JavaScript optional argument hazard by Allen Wirfs-Brock for more discussions.\n### Mapped array contains undefined\nWhen  or nothing is returned, the resulting array contains `undefined`. If you want to delete the element instead, chain a  method, or use the  method and return an empty array to signify deletion.\n```js\nconst numbers = [1, 2, 3, 4];"
+  },
+  "143": {
+    "source": "javascript\\array-map.md",
+    "text": "const filteredNumbers = numbers.map((num, index) => {\nif (index < 3) {\nreturn num;\n}\n});\n// index goes from 0, so the filterNumbers are 1,2,3 and undefined.\n// filteredNumbers is [1, 2, 3, undefined]\n// numbers is still [1, 2, 3, 4]\n```\n### Side-effectful mapping\nThe callback can have side effects.\n```js\nconst cart = [5, 15, 25];\nlet total = 0;\nconst withTax = cart.map((cost) => {\ntotal += cost;"
+  },
+  "144": {
+    "source": "javascript\\array-map.md",
+    "text": "return cost * 1.2;\n});\nconsole.log(withTax); // [6, 18, 30]\nconsole.log(total); // 45\n```\nThis is not recommended, because copying methods are best used with pure functions. In this case, we can choose to iterate the array twice.\n```js\nconst cart = [5, 15, 25];\nconst total = cart.reduce((acc, cost) => acc + cost, 0);\nconst withTax = cart.map((cost) => cost * 1.2);\n```"
+  },
+  "145": {
+    "source": "javascript\\array-map.md",
+    "text": "Sometimes this pattern goes to its extreme and the _only_ useful thing that `map()` does is causing side effects.\n```js\nconst products = [\n{ name: \"sports car\" },\n{ name: \"laptop\" },\n{ name: \"phone\" },\n];\nproducts.map((product) => {\nproduct.price = 100;\n});\n```"
+  },
+  "146": {
+    "source": "javascript\\array-map.md",
+    "text": "As mentioned previously, this is an anti-pattern. If you don't use the return value of `map()`, use `forEach()` or a `for...of` loop instead.\n```js\nproducts.forEach((product) => {\nproduct.price = 100;\n});\n```\nOr, if you want to create a new array instead:\n```js\nconst productsWithPrice = products.map((product) => ({\n...product,\nprice: 100,\n}));\n```\n### Using the third argument of callbackFn"
+  },
+  "147": {
+    "source": "javascript\\array-map.md",
+    "text": "The `array` argument is useful if you want to access another element in the array, especially when you don't have an existing variable that refers to the array. The following example first uses `filter()` to extract the positive values and then uses `map()` to create a new array where each element is the average of its neighbors and itself.\n```js\nconst numbers = [3, -1, 1, 4, 1, 5, 9, 2, 6];"
+  },
+  "148": {
+    "source": "javascript\\array-map.md",
+    "text": "const averaged = numbers\n.filter((num) => num > 0)\n.map((num, idx, arr) => {\n// Without the arr argument, there's no way to easily access the\n// intermediate array without saving it to a variable.\nconst prev = arr[idx - 1];\nconst next = arr[idx + 1];\nlet count = 1;\nlet total = num;\nif (prev !== undefined) {\ncount++;\ntotal += prev;\n}\nif (next !== undefined) {\ncount++;\ntotal += next;\n}"
+  },
+  "149": {
+    "source": "javascript\\array-map.md",
+    "text": "const average = total / count;\n// Keep two decimal places\nreturn Math.round(average * 100) / 100;\n});\nconsole.log(averaged); // [2, 2.67, 2, 3.33, 5, 5.33, 5.67, 4]\n```\nThe `array` argument is _not_ the array that is being built — there is no way to access the array being built from the callback function.\n### Using map() on sparse arrays"
+  },
+  "150": {
+    "source": "javascript\\array-map.md",
+    "text": "A sparse array remains sparse after `map()`. The indices of empty slots are still empty in the returned array, and the callback function won't be called on them.\n```js\nconsole.log(\n[1, , 3].map((x, index) => {\nconsole.log(`Visit ${index}`);\nreturn x * 2;\n}),\n);\n// Visit 0\n// Visit 2\n// [2, empty, 6]\n```\n### Calling map() on non-array objects"
+  },
+  "151": {
+    "source": "javascript\\array-map.md",
+    "text": "The `map()` method reads the `length` property of `this` and then accesses each property whose key is a nonnegative integer less than `length`.\n```js\nconst arrayLike = {\nlength: 3,\n0: 2,\n1: 3,\n2: 4,\n3: 5, // ignored by map() since length is 3\n};\nconsole.log(Array.prototype.map.call(arrayLike, (x) => x ** 2));\n// [ 4, 9, 16 ]\n```"
+  },
+  "152": {
+    "source": "javascript\\array-map.md",
+    "text": "This example shows how to iterate through a collection of objects collected by `querySelectorAll`. This is because `querySelectorAll` returns a `NodeList` (which is a collection of objects). In this case, we return all the selected `option`s' values on the screen:\n```js\nconst elems = document.querySelectorAll(\"select option:checked\");"
+  },
+  "153": {
+    "source": "javascript\\array-map.md",
+    "text": "const values = Array.prototype.map.call(elems, ({ value }) => value);\n```\nYou can also use  to transform `elems` to an array, and then access the `map()` method.\n## Specifications\n## Browser compatibility\n## See also\n- Polyfill of `Array.prototype.map` in `core-js`\n- es-shims polyfill of `Array.prototype.map`\n- Indexed collections guide\n-\n-\n-\n-\n-"
+  },
+  "154": {
+    "source": "javascript\\array.md",
+    "text": "The **`Array()`** constructor creates  objects.\n## Syntax\n```js-nolint\nnew Array()\nnew Array(element1)\nnew Array(element1, element2)\nnew Array(element1, element2, /* …, */ elementN)\nnew Array(arrayLength)\nArray()\nArray(element1)\nArray(element1, element2)\nArray(element1, element2, /* …, */ elementN)\nArray(arrayLength)\n```\n> [!NOTE]"
+  },
+  "155": {
+    "source": "javascript\\array.md",
+    "text": "> `Array()` can be called with or without `new`. Both create a new `Array` instance.\n### Parameters\n- `element1`, …, `elementN`\n- : A JavaScript array is initialized with the given elements, except in the case where\na single argument is passed to the `Array` constructor and that argument is\na number (see the `arrayLength` parameter below). Note that this special case only"
+  },
+  "156": {
+    "source": "javascript\\array.md",
+    "text": "applies to JavaScript arrays created with the `Array` constructor, not\narray literals created with the square bracket syntax.\n- `arrayLength`\n- : If the only argument passed to the `Array` constructor is an integer\nbetween 0 and 2<sup>32</sup> - 1 (inclusive), this returns a new JavaScript array with\nits `length` property set to that number.\n> [!NOTE]"
+  },
+  "157": {
+    "source": "javascript\\array.md",
+    "text": "> This implies an array of `arrayLength` empty slots, not slots with actual `undefined` values — see sparse arrays).\n### Exceptions\n-\n- : Thrown if there's only one argument (`arrayLength`) that is a number, but its value is not an integer or not between 0 and 2<sup>32</sup> - 1 (inclusive).\n## Examples\n### Array literal notation\nArrays can be created using the literal\nnotation:\n```js"
+  },
+  "158": {
+    "source": "javascript\\array.md",
+    "text": "const fruits = [\"Apple\", \"Banana\"];\nconsole.log(fruits.length); // 2\nconsole.log(fruits[0]); // \"Apple\"\n```\n### Array constructor with a single parameter\nArrays can be created using a constructor with a single number parameter. An array is created with\nits `length` property set to that number, and the array elements are empty\nslots.\n```js\nconst arrayEmpty = new Array(2);"
+  },
+  "159": {
+    "source": "javascript\\array.md",
+    "text": "console.log(arrayEmpty.length); // 2\nconsole.log(arrayEmpty[0]); // undefined; actually, it is an empty slot\nconsole.log(0 in arrayEmpty); // false\nconsole.log(1 in arrayEmpty); // false\n```\n```js\nconst arrayOfOne = new Array(\"2\"); // Not the number 2 but the string \"2\"\nconsole.log(arrayOfOne.length); // 1\nconsole.log(arrayOfOne[0]); // \"2\"\n```\n### Array constructor with multiple parameters"
+  },
+  "160": {
+    "source": "javascript\\array.md",
+    "text": "If more than one argument is passed to the constructor, a new  with\nthe given elements is created.\n```js\nconst fruits = new Array(\"Apple\", \"Banana\");\nconsole.log(fruits.length); // 2\nconsole.log(fruits[0]); // \"Apple\"\n```\n## Specifications\n## Browser compatibility\n## See also\n- Indexed collections guide\n-"
+  },
+  "161": {
+    "source": "javascript\\promise.md",
+    "text": "The **`Promise`** object represents the eventual completion (or failure) of an asynchronous operation and its resulting value.\nTo learn about the way promises work and how you can use them, we advise you to read Using promises first.\n## Description"
+  },
+  "162": {
+    "source": "javascript\\promise.md",
+    "text": "A `Promise` is a proxy for a value not necessarily known when the promise is created. It allows you to associate handlers with an asynchronous action's eventual success value or failure reason. This lets asynchronous methods return values like synchronous methods: instead of immediately returning the final value, the asynchronous method returns a _promise_ to supply the value at some point in the "
+  },
+  "163": {
+    "source": "javascript\\promise.md",
+    "text": "future."
+  },
+  "164": {
+    "source": "javascript\\promise.md",
+    "text": "A `Promise` is in one of these states:\n- _pending_: initial state, neither fulfilled nor rejected.\n- _fulfilled_: meaning that the operation was completed successfully.\n- _rejected_: meaning that the operation failed.\nThe _eventual state_ of a pending promise can either be _fulfilled_ with a value or _rejected_ with a reason (error)."
+  },
+  "165": {
+    "source": "javascript\\promise.md",
+    "text": "When either of these options occur, the associated handlers queued up by a promise's `then` method are called. If the promise has already been fulfilled or rejected when a corresponding handler is attached, the handler will be called, so there is no race condition between an asynchronous operation completing and its handlers being attached."
+  },
+  "166": {
+    "source": "javascript\\promise.md",
+    "text": "A promise is said to be _settled_ if it is either fulfilled or rejected, but not pending."
+  },
+  "167": {
+    "source": "javascript\\promise.md",
+    "text": "!Flowchart showing how the Promise state transitions between pending, fulfilled, and rejected via then/catch handlers. A pending promise can become either fulfilled or rejected. If fulfilled, the \"on fulfillment\" handler, or first parameter of the then() method, is executed and carries out further asynchronous actions. If rejected, the error handler, either passed as the second parameter of the th"
+  },
+  "168": {
+    "source": "javascript\\promise.md",
+    "text": "en() method or as the sole parameter of the catch() method, gets executed."
+  },
+  "169": {
+    "source": "javascript\\promise.md",
+    "text": "You will also hear the term _resolved_ used with promises — this means that the promise is settled or \"locked-in\" to match the eventual state of another promise, and further resolving or rejecting it has no effect. The States and fates document from the original Promise proposal contains more details about promise terminology. Colloquially, \"resolved\" promises are often equivalent to \"fulfilled\" p"
+  },
+  "170": {
+    "source": "javascript\\promise.md",
+    "text": "romises, but as illustrated in \"States and fates\", resolved promises can be pending or rejected as well. For example:"
+  },
+  "171": {
+    "source": "javascript\\promise.md",
+    "text": "```js\nnew Promise((resolveOuter) => {\nresolveOuter(\nnew Promise((resolveInner) => {\nsetTimeout(resolveInner, 1000);\n}),\n);\n});\n```"
+  },
+  "172": {
+    "source": "javascript\\promise.md",
+    "text": "This promise is already _resolved_ at the time when it's created (because the `resolveOuter` is called synchronously), but it is resolved with another promise, and therefore won't be _fulfilled_ until 1 second later, when the inner promise fulfills. In practice, the \"resolution\" is often done behind the scenes and not observable, and only its fulfillment or rejection are.\n> [!NOTE]"
+  },
+  "173": {
+    "source": "javascript\\promise.md",
+    "text": "> Several other languages have mechanisms for lazy evaluation and deferring a computation, which they also call \"promises\", e.g., Scheme. Promises in JavaScript represent processes that are already happening, which can be chained with callback functions. If you are looking to lazily evaluate an expression, consider using a function with no arguments e.g., `f = () => expression` to create the lazil"
+  },
+  "174": {
+    "source": "javascript\\promise.md",
+    "text": "y-evaluated expression, and `f()` to evaluate the expression immediately."
+  },
+  "175": {
+    "source": "javascript\\promise.md",
+    "text": "`Promise` itself has no first-class protocol for cancellation, but you may be able to directly cancel the underlying asynchronous operation, typically using `AbortController`.\n### Chained Promises"
+  },
+  "176": {
+    "source": "javascript\\promise.md",
+    "text": "The promise methods , , and  are used to associate further action with a promise that becomes settled. The `then()` method takes up to two arguments; the first argument is a callback function for the fulfilled case of the promise, and the second argument is a callback function for the rejected case. The `catch()` and `finally()` methods call `then()` internally and make error handling less verbose"
+  },
+  "177": {
+    "source": "javascript\\promise.md",
+    "text": ". For example, a `catch()` is really just a `then()` without passing the fulfillment handler. As these methods return promises, they can be chained. For example:"
+  },
+  "178": {
+    "source": "javascript\\promise.md",
+    "text": "```js\nconst myPromise = new Promise((resolve, reject) => {\nsetTimeout(() => {\nresolve(\"foo\");\n}, 300);\n});\nmyPromise\n.then(handleFulfilledA, handleRejectedA)\n.then(handleFulfilledB, handleRejectedB)\n.then(handleFulfilledC, handleRejectedC);\n```"
+  },
+  "179": {
+    "source": "javascript\\promise.md",
+    "text": "We will use the following terminology: _initial promise_ is the promise on which `then` is called; _new promise_ is the promise returned by `then`. The two callbacks passed to `then` are called _fulfillment handler_ and _rejection handler_, respectively.\nThe settled state of the initial promise determines which handler to execute."
+  },
+  "180": {
+    "source": "javascript\\promise.md",
+    "text": "- If the initial promise is fulfilled, the fulfillment handler is called with the fulfillment value.\n- If the initial promise is rejected, the rejection handler is called with the rejection reason.\nThe completion of the handler determines the settled state of the new promise.\n- If the handler returns a thenable value, the new promise settles in the same state as the returned value."
+  },
+  "181": {
+    "source": "javascript\\promise.md",
+    "text": "- If the handler returns a non-thenable value, the new promise is fulfilled with the returned value.\n- If the handler throws an error, the new promise is rejected with the thrown error."
+  },
+  "182": {
+    "source": "javascript\\promise.md",
+    "text": "- If the initial promise has no corresponding handler attached, the new promise will settle to the same state as the initial promise — that is, without a rejection handler, a rejected promise stays rejected with the same reason."
+  },
+  "183": {
+    "source": "javascript\\promise.md",
+    "text": "For example, in the code above, if `myPromise` rejects, `handleRejectedA` will be called, and if `handleRejectedA` completes normally (without throwing or returning a rejected promise), the promise returned by the first `then` will be fulfilled instead of staying rejected. Therefore, if an error must be handled immediately, but we want to maintain the error state down the chain, we must throw an e"
+  },
+  "184": {
+    "source": "javascript\\promise.md",
+    "text": "rror of some type in the rejection handler. On the other hand, in the absence of an immediate need, we can leave out error handling until the final `catch()` handler."
+  },
+  "185": {
+    "source": "javascript\\promise.md",
+    "text": "```js\nmyPromise\n.then(handleFulfilledA)\n.then(handleFulfilledB)\n.then(handleFulfilledC)\n.catch(handleRejectedAny);\n```\nUsing arrow functions for the callback functions, implementation of the promise chain might look something like this:\n```js\nmyPromise\n.then((value) => `${value} and bar`)\n.then((value) => `${value} and bar again`)\n.then((value) => `${value} and again`)"
+  },
+  "186": {
+    "source": "javascript\\promise.md",
+    "text": ".then((value) => `${value} and again`)\n.then((value) => {\nconsole.log(value);\n})\n.catch((err) => {\nconsole.error(err);\n});\n```\n> [!NOTE]\n> For faster execution, all synchronous actions should preferably be done within one handler, otherwise it would take several ticks to execute all handlers in sequence."
+  },
+  "187": {
+    "source": "javascript\\promise.md",
+    "text": "JavaScript maintains a job queue. Each time, JavaScript picks a job from the queue and executes it to completion. The jobs are defined by the executor of the `Promise()` constructor, the handlers passed to `then`, or any platform API that returns a promise. The promises in a chain represent the dependency relationship between these jobs. When a promise settles, the respective handlers associated w"
+  },
+  "188": {
+    "source": "javascript\\promise.md",
+    "text": "ith it are added to the back of the job queue."
+  },
+  "189": {
+    "source": "javascript\\promise.md",
+    "text": "A promise can participate in more than one chain. For the following code, the fulfillment of `promiseA` will cause both `handleFulfilled1` and `handleFulfilled2` to be added to the job queue. Because `handleFulfilled1` is registered first, it will be invoked first.\n```js\nconst promiseA = new Promise(myExecutorFunc);\nconst promiseB = promiseA.then(handleFulfilled1, handleRejected1);"
+  },
+  "190": {
+    "source": "javascript\\promise.md",
+    "text": "const promiseC = promiseA.then(handleFulfilled2, handleRejected2);\n```"
+  },
+  "191": {
+    "source": "javascript\\promise.md",
+    "text": "An action can be assigned to an already settled promise. In this case, the action is added immediately to the back of the job queue and will be performed when all existing jobs are completed. Therefore, an action for an already \"settled\" promise will occur only after the current synchronous code completes and at least one loop-tick has passed. This guarantees that promise actions are asynchronous."
+  },
+  "192": {
+    "source": "javascript\\promise.md",
+    "text": "```js\nconst promiseA = new Promise((resolve, reject) => {\nresolve(777);\n});\n// At this point, \"promiseA\" is already settled.\npromiseA.then((val) => console.log(\"asynchronous logging has val:\", val));\nconsole.log(\"immediate logging\");\n// produces output in this order:\n// immediate logging\n// asynchronous logging has val: 777\n```\n### Thenables"
+  },
+  "193": {
+    "source": "javascript\\promise.md",
+    "text": "The JavaScript ecosystem had made multiple Promise implementations long before it became part of the language. Despite being represented differently internally, at the minimum, all Promise-like objects implement the _Thenable_ interface. A thenable implements the `.then()` method, which is called with two callbacks: one for when the promise is fulfilled, one for when it's rejected. Promises are th"
+  },
+  "194": {
+    "source": "javascript\\promise.md",
+    "text": "enables as well."
+  },
+  "195": {
+    "source": "javascript\\promise.md",
+    "text": "To interoperate with the existing Promise implementations, the language allows using thenables in place of promises. For example, `Promise.resolve` will not only resolve promises, but also trace thenables.\n```js\n// This is not a Promises/A+ compliant thenable! It calls onFulfilled\n// synchronously. For demonstration only.\nconst thenable = {\nthen(onFulfilled, onRejected) {\nonFulfilled({"
+  },
+  "196": {
+    "source": "javascript\\promise.md",
+    "text": "// The thenable is fulfilled with another thenable\nthen(onFulfilled, onRejected) {\nonFulfilled(42);\n},\n});\n},\n};\nPromise.resolve(thenable); // A promise fulfilled with 42\n```"
+  },
+  "197": {
+    "source": "javascript\\promise.md",
+    "text": "The `then()` method is responsible for scheduling the execution of the provided `onFulfilled` and `onRejected` callbacks. Its semantics, including error handling and asynchronicity, are precisely defined in the Promises/A+ specification, and we shall not repeat them here. It's very rare that you need to implement a thenable yourself; even if you are not using native promises, you would probably be"
+  },
+  "198": {
+    "source": "javascript\\promise.md",
+    "text": " using a Promise library such as Bluebird."
+  },
+  "199": {
+    "source": "javascript\\promise.md",
+    "text": "### Promise concurrency\nThe `Promise` class offers four static methods to facilitate async task concurrency:\n-\n- : Fulfills when **all** of the promises fulfill; rejects when **any** of the promises rejects.\n-\n- : Fulfills when **all** promises settle.\n-\n- : Fulfills when **any** of the promises fulfills; rejects when **all** of the promises reject.\n-"
+  },
+  "200": {
+    "source": "javascript\\promise.md",
+    "text": "- : Settles when **any** of the promises settles. In other words, fulfills when any of the promises fulfills; rejects when any of the promises rejects."
+  },
+  "201": {
+    "source": "javascript\\promise.md",
+    "text": "All these methods take an iterable of promises (thenables, to be exact) and return a new promise. They all support subclassing, which means they can be called on subclasses of `Promise`, and the result will be a promise of the subclass type. To do so, the subclass's constructor must implement the same signature as the `Promise()` constructor — accepting a single `executor` function that can be cal"
+  },
+  "202": {
+    "source": "javascript\\promise.md",
+    "text": "led with the `resolve` and `reject` callbacks as parameters. The subclass must also have a `resolve` static method that can be called like  to resolve values to promises."
+  },
+  "203": {
+    "source": "javascript\\promise.md",
+    "text": "Note that JavaScript is single-threaded by nature, so at a given instant, only one task will be executing, although control can shift between different promises, making execution of the promises appear concurrent. Parallel execution in JavaScript can only be achieved through worker threads.\n## Constructor\n-"
+  },
+  "204": {
+    "source": "javascript\\promise.md",
+    "text": "- : Creates a new `Promise` object. The constructor is primarily used to wrap functions that do not already support promises.\n## Static properties\n- [`Promise[Symbol.species]`](/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/Symbol.species)\n- : Returns the constructor used to construct return values from promise methods.\n## Static methods\n-"
+  },
+  "205": {
+    "source": "javascript\\promise.md",
+    "text": "- : Takes an iterable of promises as input and returns a single `Promise`. This returned promise fulfills when all of the input's promises fulfill (including when an empty iterable is passed), with an array of the fulfillment values. It rejects when any of the input's promises reject, with this first rejection reason.\n-"
+  },
+  "206": {
+    "source": "javascript\\promise.md",
+    "text": "- : Takes an iterable of promises as input and returns a single `Promise`. This returned promise fulfills when all of the input's promises settle (including when an empty iterable is passed), with an array of objects that describe the outcome of each promise.\n-"
+  },
+  "207": {
+    "source": "javascript\\promise.md",
+    "text": "- : Takes an iterable of promises as input and returns a single `Promise`. This returned promise fulfills when any of the input's promises fulfill, with this first fulfillment value. It rejects when all of the input's promises reject (including when an empty iterable is passed), with an  containing an array of rejection reasons.\n-"
+  },
+  "208": {
+    "source": "javascript\\promise.md",
+    "text": "- : Takes an iterable of promises as input and returns a single `Promise`. This returned promise settles with the eventual state of the first promise that settles.\n-\n- : Returns a new `Promise` object that is rejected with the given reason.\n-"
+  },
+  "209": {
+    "source": "javascript\\promise.md",
+    "text": "- : Returns a `Promise` object that is resolved with the given value. If the value is a thenable (i.e., has a `then` method), the returned promise will \"follow\" that thenable, adopting its eventual state; otherwise, the returned promise will be fulfilled with the value.\n-\n- : Takes a callback of any kind (returns or throws, synchronously or asynchronously) and wraps its result in a `Promise`.\n-"
+  },
+  "210": {
+    "source": "javascript\\promise.md",
+    "text": "- : Returns an object containing a new `Promise` object and two functions to resolve or reject it, corresponding to the two parameters passed to the executor of the  constructor.\n## Instance properties\nThese properties are defined on `Promise.prototype` and shared by all `Promise` instances.\n-"
+  },
+  "211": {
+    "source": "javascript\\promise.md",
+    "text": "- : The constructor function that created the instance object. For `Promise` instances, the initial value is the  constructor.\n- `Promise.prototype[Symbol.toStringTag]`\n- : The initial value of the [`[Symbol.toStringTag]`](/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag) property is the string `\"Promise\"`. This property is used in .\n## Instance methods\n-"
+  },
+  "212": {
+    "source": "javascript\\promise.md",
+    "text": "- : Appends a rejection handler callback to the promise, and returns a new promise resolving to the return value of the callback if it is called, or to its original fulfillment value if the promise is instead fulfilled.\n-"
+  },
+  "213": {
+    "source": "javascript\\promise.md",
+    "text": "- : Appends a handler to the promise, and returns a new promise that is resolved when the original promise is resolved. The handler is called when the promise is settled, whether fulfilled or rejected.\n-"
+  },
+  "214": {
+    "source": "javascript\\promise.md",
+    "text": "- : Appends fulfillment and rejection handlers to the promise, and returns a new promise resolving to the return value of the called handler, or to its original settled value if the promise was not handled (i.e., if the relevant handler `onFulfilled` or `onRejected` is not a function).\n## Examples\n### Basic Example\nIn this example, we use `setTimeout(...)` to simulate async code."
+  },
+  "215": {
+    "source": "javascript\\promise.md",
+    "text": "In reality, you will probably be using something like XHR or an HTML API.\n```js\nconst myFirstPromise = new Promise((resolve, reject) => {\n// We call resolve(...) when what we were doing asynchronously\n// was successful, and reject(...) when it failed.\nsetTimeout(() => {\nresolve(\"Success!\"); // Yay! Everything went well!\n}, 250);\n});\nmyFirstPromise.then((successMessage) => {"
+  },
+  "216": {
+    "source": "javascript\\promise.md",
+    "text": "// successMessage is whatever we passed in the resolve(...) function above.\n// It doesn't have to be a string, but if it is only a succeed message, it probably will be.\nconsole.log(`Yay! ${successMessage}`);\n});\n```\n### Example with diverse situations"
+  },
+  "217": {
+    "source": "javascript\\promise.md",
+    "text": "This example shows diverse techniques for using Promise capabilities and diverse situations that can occur. To understand this, start by scrolling to the bottom of the code block, and examine the promise chain. Upon provision of an initial promise, a chain of promises can follow. The chain is composed of `.then()` calls, and typically (but not necessarily) has a single `.catch()` at the end, optio"
+  },
+  "218": {
+    "source": "javascript\\promise.md",
+    "text": "nally followed by `.finally()`. In this example, the promise chain is initiated by a custom-written `new Promise()` construct; but in actual practice, promise chains more typically start with an API function (written by someone else) that returns a promise."
+  },
+  "219": {
+    "source": "javascript\\promise.md",
+    "text": "The example function `tetheredGetNumber()` shows that a promise generator will utilize `reject()` while setting up an asynchronous call, or within the call-back, or both. The function `promiseGetWord()` illustrates how an API function might generate and return a promise in a self-contained manner."
+  },
+  "220": {
+    "source": "javascript\\promise.md",
+    "text": "Note that the function `troubleWithGetNumber()` ends with a `throw`. That is forced because a promise chain goes through all the `.then()` promises, even after an error, and without the `throw`, the error would seem \"fixed\". This is a hassle, and for this reason, it is common to omit `onRejected` throughout the chain of `.then()` promises, and just have a single `onRejected` in the final `catch()`"
+  },
+  "221": {
+    "source": "javascript\\promise.md",
+    "text": "."
+  },
+  "222": {
+    "source": "javascript\\promise.md",
+    "text": "This code can be run under NodeJS. Comprehension is enhanced by seeing the errors actually occur. To force more errors, change the `threshold` values.\n```js\n// To experiment with error handling, \"threshold\" values cause errors randomly\nconst THRESHOLD_A = 8; // can use zero 0 to guarantee error\nfunction tetheredGetNumber(resolve, reject) {\nsetTimeout(() => {\nconst randomInt = Date.now();"
+  },
+  "223": {
+    "source": "javascript\\promise.md",
+    "text": "const value = randomInt % 10;\nif (value < THRESHOLD_A) {\nresolve(value);\n} else {\nreject(new RangeError(`Too large: ${value}`));\n}\n}, 500);\n}\nfunction determineParity(value) {\nconst isOdd = value % 2 === 1;\nreturn { value, isOdd };\n}\nfunction troubleWithGetNumber(reason) {\nconst err = new Error(\"Trouble getting number\", { cause: reason });\nconsole.error(err);\nthrow err;\n}"
+  },
+  "224": {
+    "source": "javascript\\promise.md",
+    "text": "function promiseGetWord(parityInfo) {\nreturn new Promise((resolve, reject) => {\nconst { value, isOdd } = parityInfo;\nif (value >= THRESHOLD_A - 1) {\nreject(new RangeError(`Still too large: ${value}`));\n} else {\nparityInfo.wordEvenOdd = isOdd ? \"odd\" : \"even\";\nresolve(parityInfo);\n}\n});\n}\nnew Promise(tetheredGetNumber)\n.then(determineParity, troubleWithGetNumber)\n.then(promiseGetWord)"
+  },
+  "225": {
+    "source": "javascript\\promise.md",
+    "text": ".then((info) => {\nconsole.log(`Got: ${info.value}, ${info.wordEvenOdd}`);\nreturn info;\n})\n.catch((reason) => {\nif (reason.cause) {\nconsole.error(\"Had previously handled error\");\n} else {\nconsole.error(`Trouble with promiseGetWord(): ${reason}`);\n}\n})\n.finally((info) => console.log(\"All done\"));\n```\n### Advanced Example"
+  },
+  "226": {
+    "source": "javascript\\promise.md",
+    "text": "This small example shows the mechanism of a `Promise`. The `testPromise()` method is called each time the  is clicked. It creates a promise that will be fulfilled, using , to the promise count (number starting from 1) every 1-3 seconds, at random. The `Promise()` constructor is used to create the promise."
+  },
+  "227": {
+    "source": "javascript\\promise.md",
+    "text": "The fulfillment of the promise is logged, via a fulfill callback set using . A few logs show how the synchronous part of the method is decoupled from the asynchronous completion of the promise.\nBy clicking the button several times in a short amount of time, you'll even see the different promises being fulfilled one after another.\n#### HTML\n```html\n<button id=\"make-promise\">Make a promise!</button>"
+  },
+  "228": {
+    "source": "javascript\\promise.md",
+    "text": "<div id=\"log\"></div>\n```\n#### JavaScript\n```js\n\"use strict\";\nlet promiseCount = 0;\nfunction testPromise() {\nconst thisPromiseCount = ++promiseCount;\nconst log = document.getElementById(\"log\");\n// begin\nlog.insertAdjacentHTML(\"beforeend\", `${thisPromiseCount}) Started<br>`);\n// We make a new promise: we promise a numeric count of this promise,\n// starting from 1 (after waiting 3s)"
+  },
+  "229": {
+    "source": "javascript\\promise.md",
+    "text": "const p1 = new Promise((resolve, reject) => {\n// The executor function is called with the ability\n// to resolve or reject the promise\nlog.insertAdjacentHTML(\n\"beforeend\",\n`${thisPromiseCount}) Promise constructor<br>`,\n);\n// This is only an example to create asynchronism\nsetTimeout(\n() => {\n// We fulfill the promise\nresolve(thisPromiseCount);\n},\nMath.random() * 2000 + 1000,\n);\n});"
+  },
+  "230": {
+    "source": "javascript\\promise.md",
+    "text": "// We define what to do when the promise is resolved with the then() call,\n// and what to do when the promise is rejected with the catch() call\np1.then((val) => {\n// Log the fulfillment value\nlog.insertAdjacentHTML(\"beforeend\", `${val}) Promise fulfilled<br>`);\n}).catch((reason) => {\n// Log the rejection reason\nconsole.log(`Handle rejected promise (${reason}) here.`);\n});\n// end"
+  },
+  "231": {
+    "source": "javascript\\promise.md",
+    "text": "log.insertAdjacentHTML(\"beforeend\", `${thisPromiseCount}) Promise made<br>`);\n}\nconst btn = document.getElementById(\"make-promise\");\nbtn.addEventListener(\"click\", testPromise);\n```\n#### Result\n### Loading an image with XHR\nAnother example using `Promise` and  to load an image is shown below.\nEach step is commented on and allows you to follow the Promise and XHR architecture closely."
+  },
+  "232": {
+    "source": "javascript\\promise.md",
+    "text": "```html hidden live-sample___promises\n<h1>Promise example</h1>\n```\n```js live-sample___promises\nfunction imgLoad(url) {\n// Create new promise with the Promise() constructor;\n// This has as its argument a function with two parameters, resolve and reject\nreturn new Promise((resolve, reject) => {\n// XHR to load an image\nconst request = new XMLHttpRequest();\nrequest.open(\"GET\", url);"
+  },
+  "233": {
+    "source": "javascript\\promise.md",
+    "text": "request.responseType = \"blob\";\n// When the request loads, check whether it was successful\nrequest.onload = () => {\nif (request.status === 200) {\n// If successful, resolve the promise by passing back the request response\nresolve(request.response);\n} else {\n// If it fails, reject the promise with an error message\nreject(\nError(\n`Image didn't load successfully; error code: + ${request.statusText}`,"
+  },
+  "234": {
+    "source": "javascript\\promise.md",
+    "text": "),\n);\n}\n};\n// Handle network errors\nrequest.onerror = () => reject(new Error(\"There was a network error.\"));\n// Send the request\nrequest.send();\n});\n}\n// Get a reference to the body element, and create a new image object\nconst body = document.querySelector(\"body\");\nconst myImage = new Image();\nconst imgUrl =\n\"https://mdn.github.io/shared-assets/images/examples/round-balloon.png\";"
+  },
+  "235": {
+    "source": "javascript\\promise.md",
+    "text": "// Call the function with the URL we want to load, then chain the\n// promise then() method with two callbacks\nimgLoad(imgUrl).then(\n(response) => {\n// The first runs when the promise resolves, with the request.response\n// specified within the resolve() method.\nconst imageURL = URL.createObjectURL(response);\nmyImage.src = imageURL;\nbody.appendChild(myImage);\n},\n(error) => {"
+  },
+  "236": {
+    "source": "javascript\\promise.md",
+    "text": "// The second runs when the promise\n// is rejected, and logs the Error specified with the reject() method.\nconsole.log(error);\n},\n);\n```\n### Incumbent settings object tracking"
+  },
+  "237": {
+    "source": "javascript\\promise.md",
+    "text": "A settings object is an environment that provides additional information when JavaScript code is running. This includes the realm and module map, as well as HTML specific information such as the origin. The incumbent settings object is tracked in order to ensure that the browser knows which one to use for a given piece of user code."
+  },
+  "238": {
+    "source": "javascript\\promise.md",
+    "text": "To better picture this, we can take a closer look at how the realm might be an issue. A **realm** can be roughly thought of as the global object. What is unique about realms is that they hold all of the necessary information to run JavaScript code. This includes objects like `Array` and `Error`. Each settings object has its own \"copy\" of these and they are not shared. That can cause some unexpecte"
+  },
+  "239": {
+    "source": "javascript\\promise.md",
+    "text": "d behavior in relation to promises. In order to get around this, we track something called the **incumbent settings object**. This represents information specific to the context of the user code responsible for a certain function call."
+  },
+  "240": {
+    "source": "javascript\\promise.md",
+    "text": "To illustrate this a bit further we can take a look at how an `<iframe>` embedded in a document communicates with its host. Since all web APIs are aware of the incumbent settings object, the following will work in all browsers:\n```html\n<!doctype html>\n<iframe></iframe>\n<!-- we have a realm here -->\n<script>\n// we have a realm here as well"
+  },
+  "241": {
+    "source": "javascript\\promise.md",
+    "text": "const bound = frames[0].postMessage.bind(frames[0], \"some data\", \"*\");\n// bound is a built-in function — there is no user\n// code on the stack, so which realm do we use?\nsetTimeout(bound);\n// this still works, because we use the youngest\n// realm (the incumbent) on the stack\n</script>\n```\nThe same concept applies to promises. If we modify the above example a little bit, we get this:\n```html"
+  },
+  "242": {
+    "source": "javascript\\promise.md",
+    "text": "<!doctype html>\n<iframe></iframe>\n<!-- we have a realm here -->\n<script>\n// we have a realm here as well\nconst bound = frames[0].postMessage.bind(frames[0], \"some data\", \"*\");\n// bound is a built in function — there is no user\n// code on the stack — which realm do we use?\nPromise.resolve(undefined).then(bound);\n// this still works, because we use the youngest\n// realm (the incumbent) on the stack"
+  },
+  "243": {
+    "source": "javascript\\promise.md",
+    "text": "</script>\n```\nIf we change this so that the `<iframe>` in the document is listening to post messages, we can observe the effect of the incumbent settings object:\n```html\n<!-- y.html -->\n<!doctype html>\n<iframe src=\"x.html\"></iframe>\n<script>\nconst bound = frames[0].postMessage.bind(frames[0], \"some data\", \"*\");\nPromise.resolve(undefined).then(bound);\n</script>\n```\n```html\n<!-- x.html -->"
+  },
+  "244": {
+    "source": "javascript\\promise.md",
+    "text": "<!doctype html>\n<script>\nwindow.addEventListener(\"message\", (event) => {\ndocument.querySelector(\"#text\").textContent = \"hello\";\n// this code will only run in browsers that track the incumbent settings object\nconsole.log(event);\n});\n</script>\n```"
+  },
+  "245": {
+    "source": "javascript\\promise.md",
+    "text": "In the above example, the inner text of the `<iframe>` will be updated only if the incumbent settings object is tracked. This is because without tracking the incumbent, we may end up using the wrong environment to send the message.\n> [!NOTE]\n> Currently, incumbent realm tracking is fully implemented in Firefox, and has partial implementations in Chrome and Safari.\n## Specifications"
+  },
+  "246": {
+    "source": "javascript\\promise.md",
+    "text": "## Browser compatibility\n## See also\n- Polyfill of `Promise` in `core-js`\n- Using promises guide\n- Promises/A+ specification\n- JavaScript Promises: an introduction on web.dev (2013)\n- Callbacks, Promises, and Coroutines: Asynchronous Programming Patterns in JavaScript slide show by Domenic Denicola (2011)"
+  },
+  "247": {
+    "source": "web-api\\fetch.md",
+    "text": "The Fetch API provides a JavaScript interface for making HTTP requests and processing the responses.\nFetch is the modern replacement for : unlike `XMLHttpRequest`, which uses callbacks, Fetch is promise-based and is integrated with features of the modern web such as service workers and Cross-Origin Resource Sharing (CORS)."
+  },
+  "248": {
+    "source": "web-api\\fetch.md",
+    "text": "With the Fetch API, you make a request by calling , which is available as a global function in both  and  contexts. You pass it a  object or a string containing the URL to fetch, along with an optional argument to configure the request."
+  },
+  "249": {
+    "source": "web-api\\fetch.md",
+    "text": "The `fetch()` function returns a  which is fulfilled with a  object representing the server's response. You can then check the request status and extract the body of the response in various formats, including text and JSON, by calling the appropriate method on the response.\nHere's a minimal function that uses `fetch()` to retrieve some JSON data from a server:\n```js\nasync function getData() {"
+  },
+  "250": {
+    "source": "web-api\\fetch.md",
+    "text": "const url = \"https://example.org/products.json\";\ntry {\nconst response = await fetch(url);\nif (!response.ok) {\nthrow new Error(`Response status: ${response.status}`);\n}\nconst result = await response.json();\nconsole.log(result);\n} catch (error) {\nconsole.error(error.message);\n}\n}\n```\nWe declare a string containing the URL and then call `fetch()`, passing the URL with no extra options."
+  },
+  "251": {
+    "source": "web-api\\fetch.md",
+    "text": "The `fetch()` function will reject the promise on some errors, but not if the server responds with an error status like : so we also check the response status and throw if it is not OK."
+  },
+  "252": {
+    "source": "web-api\\fetch.md",
+    "text": "Otherwise, we fetch the response body content as  by calling the  method of `Response`, and log one of its values. Note that like `fetch()` itself, `json()` is asynchronous, as are all the other methods to access the response body content.\nIn the rest of this page we'll look in more detail at the different stages of this process.\n## Making a request\nTo make a request, call `fetch()`, passing in:"
+  },
+  "253": {
+    "source": "web-api\\fetch.md",
+    "text": "1. a definition of the resource to fetch. This can be any one of:\n- a string containing the URL\n- an object, such as an instance of , which has a  that produces a string containing the URL\n- a  instance\n2. optionally, an object containing options to configure the request."
+  },
+  "254": {
+    "source": "web-api\\fetch.md",
+    "text": "In this section we'll look at some of the most commonly-used options. To read about all the options that can be given, see the `fetch()` reference page.\n### Setting the method\nBy default, `fetch()` makes a  request, but you can use the `method` option to use a different request method:\n```js\nconst response = await fetch(\"https://example.org/post\", {\nmethod: \"POST\",\n// …\n});\n```"
+  },
+  "255": {
+    "source": "web-api\\fetch.md",
+    "text": "If the `mode` option is set to `no-cors`, then `method` must be one of `GET`, `POST` or `HEAD`.\n### Setting a body"
+  },
+  "256": {
+    "source": "web-api\\fetch.md",
+    "text": "The request body is the payload of the request: it's the thing the client is sending to the server. You cannot include a body with `GET` requests, but it's useful for requests that send content to the server, such as  or  requests. For example, if you want to upload a file to the server, you might make a `POST` request and include the file as the request body."
+  },
+  "257": {
+    "source": "web-api\\fetch.md",
+    "text": "To set a request body, pass it as the `body` option:\n```js\nconst response = await fetch(\"https://example.org/post\", {\nmethod: \"POST\",\nbody: JSON.stringify({ username: \"example\" }),\n// …\n});\n```\nYou can supply the body as an instance of any of the following types:\n- a string\n-\n-\n-\n-\n-\n-\n-\n-"
+  },
+  "258": {
+    "source": "web-api\\fetch.md",
+    "text": "Other objects are converted to strings using their `toString()` method. For example, you can use a  object to encode form data (see setting headers for more information):\n```js\nconst response = await fetch(\"https://example.org/post\", {\nmethod: \"POST\",\nheaders: {\n\"Content-Type\": \"application/x-www-form-urlencoded\",\n},\n// Automatically converted to \"username=example&password=password\""
+  },
+  "259": {
+    "source": "web-api\\fetch.md",
+    "text": "body: new URLSearchParams({ username: \"example\", password: \"password\" }),\n// …\n});\n```\nNote that just like response bodies, request bodies are streams, and making the request reads the stream, so if a request contains a body, you can't make it twice:\n```js example-bad\nconst request = new Request(\"https://example.org/post\", {\nmethod: \"POST\",\nbody: JSON.stringify({ username: \"example\" }),\n});"
+  },
+  "260": {
+    "source": "web-api\\fetch.md",
+    "text": "const response1 = await fetch(request);\nconsole.log(response1.status);\n// Will throw: \"Body has already been consumed.\"\nconst response2 = await fetch(request);\nconsole.log(response2.status);\n```\nInstead, you would need to  of the request before sending it:\n```js\nconst request1 = new Request(\"https://example.org/post\", {\nmethod: \"POST\",\nbody: JSON.stringify({ username: \"example\" }),\n});"
+  },
+  "261": {
+    "source": "web-api\\fetch.md",
+    "text": "const request2 = request1.clone();\nconst response1 = await fetch(request1);\nconsole.log(response1.status);\nconst response2 = await fetch(request2);\nconsole.log(response2.status);\n```\nSee Locked and disturbed streams for more information.\n### Setting headers"
+  },
+  "262": {
+    "source": "web-api\\fetch.md",
+    "text": "Request headers give the server information about the request: for example, in a `POST` request, the  header tells the server the format of the request's body.\nTo set request headers, assign them to the `headers` option.\nYou can pass an object literal here containing `header-name: header-value` properties:\n```js\nconst response = await fetch(\"https://example.org/post\", {\nmethod: \"POST\",\nheaders: {"
+  },
+  "263": {
+    "source": "web-api\\fetch.md",
+    "text": "\"Content-Type\": \"application/json\",\n},\nbody: JSON.stringify({ username: \"example\" }),\n// …\n});\n```\nAlternatively, you can construct a  object, add headers to that object using , then assign the `Headers` object to the `headers` option:\n```js\nconst myHeaders = new Headers();\nmyHeaders.append(\"Content-Type\", \"application/json\");\nconst response = await fetch(\"https://example.org/post\", {"
+  },
+  "264": {
+    "source": "web-api\\fetch.md",
+    "text": "method: \"POST\",\nheaders: myHeaders,\nbody: JSON.stringify({ username: \"example\" }),\n// …\n});\n```"
+  },
+  "265": {
+    "source": "web-api\\fetch.md",
+    "text": "Compared to using plain objects, the `Headers` object provides some additional input sanitization. For example, it normalizes header names to lowercase, strips leading and trailing whitespace from header values, and prevents certain headers from being set. Many headers are set automatically by the browser and can't be set by a script: these are called . If the  option is set to `no-cors`, then the"
+  },
+  "266": {
+    "source": "web-api\\fetch.md",
+    "text": " set of permitted headers is further restricted."
+  },
+  "267": {
+    "source": "web-api\\fetch.md",
+    "text": "### Sending data in a GET request\n`GET` requests don't have a body, but you can still send data to the server by appending it to the URL as a query string. This is a common way to send form data to the server. You can do this by using  to encode the data, and then appending it to the URL:\n```js\nconst params = new URLSearchParams();\nparams.append(\"username\", \"example\");"
+  },
+  "268": {
+    "source": "web-api\\fetch.md",
+    "text": "// GET request sent to https://example.org/login?username=example\nconst response = await fetch(`https://example.org/login?${params}`);\n```\n### Making cross-origin requests\nWhether a request can be made cross-origin or not is determined by the value of the  option. This may take one of three values: `cors`, `same-origin`, or `no-cors`."
+  },
+  "269": {
+    "source": "web-api\\fetch.md",
+    "text": "- For fetch requests the default value of `mode` is `cors`, meaning that if the request is cross-origin then it will use the Cross-Origin Resource Sharing (CORS) mechanism. This means that:\n- if the request is a simple request, then the request will always be sent, but the server must respond with the correct  header or the browser will not share the response with the caller."
+  },
+  "270": {
+    "source": "web-api\\fetch.md",
+    "text": "- if the request is not a simple request, then the browser will send a preflighted request to check that the server understands CORS and allows the request, and the real request will not be sent unless the server responds to the preflighted request with the appropriate CORS headers.\n- Setting `mode` to `same-origin` disallows cross-origin requests completely."
+  },
+  "271": {
+    "source": "web-api\\fetch.md",
+    "text": "- Setting `mode` to `no-cors` disables CORS for cross-origin requests. This restricts the headers that may be set, and restricts methods to GET, HEAD, and POST. The response is _opaque_, meaning that its headers and body are not available to JavaScript. Most of the time a website should not use `no-cors`: the main application of it is for certain service worker use cases."
+  },
+  "272": {
+    "source": "web-api\\fetch.md",
+    "text": "See the reference documentation for  for more details.\n### Including credentials\nIn the context of the Fetch API, a credential is an extra piece of data sent along with the request that the server may use to authenticate the user. All the following items are considered to be credentials:\n- HTTP cookies\n-  client certificates\n- The  and  headers."
+  },
+  "273": {
+    "source": "web-api\\fetch.md",
+    "text": "By default, credentials are only included in same-origin requests. To customize this behavior, as well as to control whether the browser respects any **`Set-Cookie`** response headers, set the `credentials` option, which can take one of the following three values:\n- `omit`: never send credentials in the request or include credentials in the response."
+  },
+  "274": {
+    "source": "web-api\\fetch.md",
+    "text": "- `same-origin` (the default): only send and include credentials for same-origin requests.\n- `include`: always include credentials, even cross-origin.\nNote that if a cookie's `SameSite` attribute is set to `Strict` or `Lax`, then the cookie will not be sent cross-site, even if `credentials` is set to `include`."
+  },
+  "275": {
+    "source": "web-api\\fetch.md",
+    "text": "Including credentials in cross-origin requests can make a site vulnerable to  attacks, so even if `credentials` is set to `include`, the server must also agree to their inclusion by including the  header in its response. Additionally, in this situation the server must explicitly specify the client's origin in the  response header (that is, `*` is not allowed)."
+  },
+  "276": {
+    "source": "web-api\\fetch.md",
+    "text": "This means that if `credentials` is set to `include` and the request is cross-origin, then:"
+  },
+  "277": {
+    "source": "web-api\\fetch.md",
+    "text": "- If the request is a simple request, then the request will be sent with credentials, but the server must set the  and  response headers, or the browser will return a network error to the caller. If the server does set the correct headers, then the response, including credentials, will be delivered to the caller."
+  },
+  "278": {
+    "source": "web-api\\fetch.md",
+    "text": "- If the request is not a simple request, then the browser will send a preflighted request without credentials, and the server must set the  and  response headers, or the browser will return a network error to the caller. If the server does set the correct headers, then the browser will follow up with the real request, including credentials, and will deliver the real response, including credential"
+  },
+  "279": {
+    "source": "web-api\\fetch.md",
+    "text": "s, to the caller."
+  },
+  "280": {
+    "source": "web-api\\fetch.md",
+    "text": "### Creating a `Request` object\nThe  constructor takes the same arguments as `fetch()` itself. This means that instead of passing options into `fetch()`, you can pass the same options to the `Request()` constructor, and then pass that object to `fetch()`.\nFor example, we can make a POST request by passing options into `fetch()` using code like this:\n```js\nconst myHeaders = new Headers();"
+  },
+  "281": {
+    "source": "web-api\\fetch.md",
+    "text": "myHeaders.append(\"Content-Type\", \"application/json\");\nconst response = await fetch(\"https://example.org/post\", {\nmethod: \"POST\",\nbody: JSON.stringify({ username: \"example\" }),\nheaders: myHeaders,\n});\n```\nHowever, we could rewrite this to pass the same arguments to the `Request()` constructor:\n```js\nconst myHeaders = new Headers();\nmyHeaders.append(\"Content-Type\", \"application/json\");"
+  },
+  "282": {
+    "source": "web-api\\fetch.md",
+    "text": "const myRequest = new Request(\"https://example.org/post\", {\nmethod: \"POST\",\nbody: JSON.stringify({ username: \"example\" }),\nheaders: myHeaders,\n});\nconst response = await fetch(myRequest);\n```\nThis also means that you can create a request from another request, while changing some of its properties using the second argument:\n```js\nasync function post(request) {\ntry {"
+  },
+  "283": {
+    "source": "web-api\\fetch.md",
+    "text": "const response = await fetch(request);\nconst result = await response.json();\nconsole.log(\"Success:\", result);\n} catch (error) {\nconsole.error(\"Error:\", error);\n}\n}\nconst request1 = new Request(\"https://example.org/post\", {\nmethod: \"POST\",\nheaders: {\n\"Content-Type\": \"application/json\",\n},\nbody: JSON.stringify({ username: \"example1\" }),\n});\nconst request2 = new Request(request1, {"
+  },
+  "284": {
+    "source": "web-api\\fetch.md",
+    "text": "body: JSON.stringify({ username: \"example2\" }),\n});\npost(request1);\npost(request2);\n```\n## Canceling a request\nTo make a request cancelable, create an , and assign its  to the request's `signal` property.\nTo cancel the request, call the controller's  method. The `fetch()` call will reject the promise with an `AbortError` exception.\n```js\nconst controller = new AbortController();"
+  },
+  "285": {
+    "source": "web-api\\fetch.md",
+    "text": "const fetchButton = document.querySelector(\"#fetch\");\nfetchButton.addEventListener(\"click\", async () => {\ntry {\nconsole.log(\"Starting fetch\");\nconst response = await fetch(\"https://example.org/get\", {\nsignal: controller.signal,\n});\nconsole.log(`Response: ${response.status}`);\n} catch (e) {\nconsole.error(`Error: ${e}`);\n}\n});\nconst cancelButton = document.querySelector(\"#cancel\");"
+  },
+  "286": {
+    "source": "web-api\\fetch.md",
+    "text": "cancelButton.addEventListener(\"click\", () => {\ncontroller.abort();\nconsole.log(\"Canceled fetch\");\n});\n```\nIf the request is aborted after the `fetch()` call has been fulfilled but before the response body has been read, then attempting to read the response body will reject with an `AbortError` exception.\n```js\nasync function get() {\nconst controller = new AbortController();"
+  },
+  "287": {
+    "source": "web-api\\fetch.md",
+    "text": "const request = new Request(\"https://example.org/get\", {\nsignal: controller.signal,\n});\nconst response = await fetch(request);\ncontroller.abort();\n// The next line will throw `AbortError`\nconst text = await response.text();\nconsole.log(text);\n}\n```\n## Handling the response"
+  },
+  "288": {
+    "source": "web-api\\fetch.md",
+    "text": "As soon as the browser has received the response status and headers from the server (and potentially before the response body itself has been received), the promise returned by `fetch()` is fulfilled with a  object.\n### Checking response status"
+  },
+  "289": {
+    "source": "web-api\\fetch.md",
+    "text": "The promise returned by `fetch()` will reject on some errors, such as a network error or a bad scheme. However, if the server responds with an error like , then `fetch()` fulfills with a `Response`, so we have to check the status before we can read the response body.\nThe  property tells us the numerical status code, and the  property returns `true` if the status is in the 200 range."
+  },
+  "290": {
+    "source": "web-api\\fetch.md",
+    "text": "A common pattern is to check the value of `ok` and throw if it is `false`:\n```js\nasync function getData() {\nconst url = \"https://example.org/products.json\";\ntry {\nconst response = await fetch(url);\nif (!response.ok) {\nthrow new Error(`Response status: ${response.status}`);\n}\n// …\n} catch (error) {\nconsole.error(error.message);\n}\n}\n```\n### Checking the response type"
+  },
+  "291": {
+    "source": "web-api\\fetch.md",
+    "text": "Responses have a  property that can be one of the following:\n- `basic`: the request was a same-origin request.\n- `cors`: the request was a cross-origin CORS request.\n- `opaque`: the request was a cross-origin simple request made with the `no-cors` mode.\n- `opaqueredirect`: the request set the `redirect` option to `manual`, and the server returned a redirect status."
+  },
+  "292": {
+    "source": "web-api\\fetch.md",
+    "text": "The type determines the possible contents of the response, as follows:\n- Basic responses exclude response headers from the  list.\n- CORS responses include only response headers from the  list.\n- Opaque responses and opaque redirect responses have a `status` of `0`, an empty header list, and a `null` body.\n### Checking headers"
+  },
+  "293": {
+    "source": "web-api\\fetch.md",
+    "text": "Just like the request, the response has a  property which is a  object, and this contains any response headers that are exposed to scripts, subject to the exclusions made based on the response type.\nA common use case for this is to check the content type before trying to read the body:\n```js\nasync function fetchJSON(request) {\ntry {\nconst response = await fetch(request);"
+  },
+  "294": {
+    "source": "web-api\\fetch.md",
+    "text": "const contentType = response.headers.get(\"content-type\");\nif (!contentType || !contentType.includes(\"application/json\")) {\nthrow new TypeError(\"Oops, we haven't got JSON!\");\n}\n// Otherwise, we can read the body as JSON\n} catch (error) {\nconsole.error(\"Error:\", error);\n}\n}\n```\n### Reading the response body"
+  },
+  "295": {
+    "source": "web-api\\fetch.md",
+    "text": "The `Response` interface provides a number of methods to retrieve the entire body contents in a variety of different formats:\n-\n-\n-\n-\n-\nThese are all asynchronous methods, returning a  which will be fulfilled with the body content.\nIn this example, we fetch an image and read it as a , which we can then use to create an object URL:\n```js\nconst image = document.querySelector(\"img\");"
+  },
+  "296": {
+    "source": "web-api\\fetch.md",
+    "text": "const url = \"flowers.jpg\";\nasync function setImage() {\ntry {\nconst response = await fetch(url);\nif (!response.ok) {\nthrow new Error(`Response status: ${response.status}`);\n}\nconst blob = await response.blob();\nconst objectURL = URL.createObjectURL(blob);\nimage.src = objectURL;\n} catch (e) {\nconsole.error(e);\n}\n}\n```"
+  },
+  "297": {
+    "source": "web-api\\fetch.md",
+    "text": "The method will throw an exception if the response body is not in the appropriate format: for example, if you call `json()` on a response that can't be parsed as JSON.\n### Streaming the response body"
+  },
+  "298": {
+    "source": "web-api\\fetch.md",
+    "text": "Request and response bodies are actually  objects, and whenever you read them, you're streaming the content. This is good for memory efficiency, because the browser doesn't have to buffer the entire response in memory before the caller retrieves it using a method like `json()`.\nThis also means that the caller can process the content incrementally as it is received."
+  },
+  "299": {
+    "source": "web-api\\fetch.md",
+    "text": "For example, consider a `GET` request that fetches a large text file and processes it in some way, or displays it to the user:\n```js\nconst url = \"https://www.example.org/a-large-file.txt\";\nasync function fetchText(url) {\ntry {\nconst response = await fetch(url);\nif (!response.ok) {\nthrow new Error(`Response status: ${response.status}`);\n}\nconst text = await response.text();\nconsole.log(text);"
+  },
+  "300": {
+    "source": "web-api\\fetch.md",
+    "text": "} catch (e) {\nconsole.error(e);\n}\n}\n```\nIf we use , as above, we must wait until the whole file has been received before we can process any of it.\nIf we stream the response instead, we can process chunks of the body as they are received from the network:\n```js\nconst url = \"https://www.example.org/a-large-file.txt\";\nasync function fetchTextAsStream(url) {\ntry {\nconst response = await fetch(url);"
+  },
+  "301": {
+    "source": "web-api\\fetch.md",
+    "text": "if (!response.ok) {\nthrow new Error(`Response status: ${response.status}`);\n}\nconst stream = response.body.pipeThrough(new TextDecoderStream());\nfor await (const value of stream) {\nconsole.log(value);\n}\n} catch (e) {\nconsole.error(e);\n}\n}\n```\nIn this example, we  over the stream, processing each chunk as it arrives."
+  },
+  "302": {
+    "source": "web-api\\fetch.md",
+    "text": "Note that when you access the body directly like this, you get the raw bytes of the response and must transform it yourself. In this case we call  to pipe the response through a , which decodes the UTF-8-encoded body data as text.\n### Processing a text file line by line"
+  },
+  "303": {
+    "source": "web-api\\fetch.md",
+    "text": "In the example below, we fetch a text resource and process it line by line, using a regular expression to look for line endings. For simplicity, we assume the text is UTF-8, and don't handle fetch errors:\n```js\nasync function* makeTextFileLineIterator(fileURL) {\nconst response = await fetch(fileURL);\nconst reader = response.body.pipeThrough(new TextDecoderStream()).getReader();"
+  },
+  "304": {
+    "source": "web-api\\fetch.md",
+    "text": "let { value: chunk = \"\", done: readerDone } = await reader.read();\nconst newline = /\\r?\\n/g;\nlet startIndex = 0;\nwhile (true) {\nconst result = newline.exec(chunk);\nif (!result) {\nif (readerDone) break;\nconst remainder = chunk.slice(startIndex);\n({ value: chunk, done: readerDone } = await reader.read());\nchunk = remainder + (chunk || \"\");\nstartIndex = newline.lastIndex = 0;\ncontinue;\n}"
+  },
+  "305": {
+    "source": "web-api\\fetch.md",
+    "text": "yield chunk.substring(startIndex, result.index);\nstartIndex = newline.lastIndex;\n}\nif (startIndex < chunk.length) {\n// Last line didn't end in a newline char\nyield chunk.substring(startIndex);\n}\n}\nasync function run(urlOfFile) {\nfor await (const line of makeTextFileLineIterator(urlOfFile)) {\nprocessLine(line);\n}\n}\nfunction processLine(line) {\nconsole.log(line);\n}"
+  },
+  "306": {
+    "source": "web-api\\fetch.md",
+    "text": "run(\"https://www.example.org/a-large-file.txt\");\n```\n### Locked and disturbed streams\nThe consequences of request and response bodies being streams are that:\n- if a reader has been attached to a stream using `ReadableStream.getReader()`, then the stream is _locked_, and nothing else can read the stream."
+  },
+  "307": {
+    "source": "web-api\\fetch.md",
+    "text": "- if any content has been read from the stream, then the stream is _disturbed_, and nothing else can read from the stream.\nThis means it's not possible to read the same response (or request) body more than once:\n```js example-bad\nasync function getData() {\nconst url = \"https://example.org/products.json\";\ntry {\nconst response = await fetch(url);\nif (!response.ok) {"
+  },
+  "308": {
+    "source": "web-api\\fetch.md",
+    "text": "throw new Error(`Response status: ${response.status}`);\n}\nconst result1 = await response.json();\nconst result2 = await response.json(); // will throw\n} catch (error) {\nconsole.error(error.message);\n}\n}\n```\nIf you do need to read the body more than once, you must call  before reading the body:\n```js\nasync function getData() {\nconst url = \"https://example.org/products.json\";\ntry {"
+  },
+  "309": {
+    "source": "web-api\\fetch.md",
+    "text": "const response1 = await fetch(url);\nif (!response1.ok) {\nthrow new Error(`Response status: ${response1.status}`);\n}\nconst response2 = response1.clone();\nconst result1 = await response1.json();\nconst result2 = await response2.json();\n} catch (error) {\nconsole.error(error.message);\n}\n}\n```"
+  },
+  "310": {
+    "source": "web-api\\fetch.md",
+    "text": "This is a common pattern when implementing an offline cache with service workers. The service worker wants to return the response to the app, but also to cache the response. So it clones the response, returns the original, and caches the clone:\n```js\nasync function cacheFirst(request) {\nconst cachedResponse = await caches.match(request);\nif (cachedResponse) {\nreturn cachedResponse;\n}\ntry {"
+  },
+  "311": {
+    "source": "web-api\\fetch.md",
+    "text": "const networkResponse = await fetch(request);\nif (networkResponse.ok) {\nconst cache = await caches.open(\"MyCache_1\");\ncache.put(request, networkResponse.clone());\n}\nreturn networkResponse;\n} catch (error) {\nreturn Response.error();\n}\n}\nself.addEventListener(\"fetch\", (event) => {\nif (precachedResources.includes(url.pathname)) {\nevent.respondWith(cacheFirst(event.request));\n}\n});\n```\n## See also"
+  },
+  "312": {
+    "source": "web-api\\fetch.md",
+    "text": "- Service Worker API\n- Streams API\n- CORS\n- HTTP\n- Fetch examples on GitHub"
+  },
+  "313": {
     "source": "web-api\\web-storage.md",
-    "text": "See also\r\n\r\n- Web Storage API landing page"
+    "text": "The Web Storage API provides mechanisms by which browsers can securely store key/value pairs.\nThis article provides a walkthrough of how to make use of this technology.\n## Basic concepts"
+  },
+  "314": {
+    "source": "web-api\\web-storage.md",
+    "text": "Storage objects are simple key-value stores, similar to objects, but they stay intact through page loads. The keys and the values are always strings (note that, as with objects, integer keys will be automatically converted to strings). You can access these values like an object, or with the  and  methods. These three lines all set the (same) colorSetting entry:\n```js"
+  },
+  "315": {
+    "source": "web-api\\web-storage.md",
+    "text": "localStorage.colorSetting = \"#a4509b\";\nlocalStorage[\"colorSetting\"] = \"#a4509b\";\nlocalStorage.setItem(\"colorSetting\", \"#a4509b\");\n```\n> [!NOTE]\n> You should always use the Web Storage API (`setItem()`, `getItem()`, `removeItem()`, `key`, `length`) instead of direct object property access such as `localStorage.key = value` or `localStorage[\"key\"] = value`."
+  },
+  "316": {
+    "source": "web-api\\web-storage.md",
+    "text": "> This avoids the pitfalls of passing an object, such as colliding with native built-in methods (like `.clear()` or `.getItem()`), unexpected data leaks from prototype inheritance, and security vulnerabilities like prototype pollution when handling untrusted user input.\nThe two mechanisms within Web Storage are as follows:"
+  },
+  "317": {
+    "source": "web-api\\web-storage.md",
+    "text": "- `sessionStorage` maintains a separate storage area for each given origin that's available for the duration of the page session (as long as the browser is open, including page reloads and restores).\n- `localStorage` does the same thing, but persists even when the browser is closed and reopened."
+  },
+  "318": {
+    "source": "web-api\\web-storage.md",
+    "text": "These mechanisms are available via the  and  properties (to be more precise, in supporting browsers the `Window` object implements the `WindowLocalStorage` and `WindowSessionStorage` objects, which the `localStorage` and `sessionStorage` properties are members of) — invoking one of these will create an instance of the  object, through which data items can be set, retrieved, and removed. A differen"
+  },
+  "319": {
+    "source": "web-api\\web-storage.md",
+    "text": "t Storage object is used for the `sessionStorage` and `localStorage` for each origin — they function and are controlled separately."
+  },
+  "320": {
+    "source": "web-api\\web-storage.md",
+    "text": "So, for example, initially calling `localStorage` on a document will return a  object; calling `sessionStorage` on a document will return a different  object. Both of these can be manipulated in the same way, but separately.\n## Feature-detecting localStorage\nTo be able to use localStorage, we should first verify that it is supported and available in the current browsing session."
+  },
+  "321": {
+    "source": "web-api\\web-storage.md",
+    "text": "### Testing for availability"
+  },
+  "322": {
+    "source": "web-api\\web-storage.md",
+    "text": "Browsers that support localStorage have a property on the window object named `localStorage`. However, just testing that the property exists, like in normal feature detection, may be insufficient. Various browsers offer settings that disable the storage API, without hiding the global object. So a browser may _support_ `localStorage`, but not make it _available_ to the scripts on the page."
+  },
+  "323": {
+    "source": "web-api\\web-storage.md",
+    "text": "For example, for a document viewed in a browser's private browsing mode, some browsers might give us an empty `localStorage` object with a quota of zero, effectively making it unusable. Conversely, we might get a legitimate `QuotaExceededError`, which means that we've used up all available storage space, but storage _is_ actually _available_. Our feature detection should take these scenarios into "
+  },
+  "324": {
+    "source": "web-api\\web-storage.md",
+    "text": "account."
+  },
+  "325": {
+    "source": "web-api\\web-storage.md",
+    "text": "Here is a function that detects whether localStorage is both supported and available:\n```js\nfunction storageAvailable(type) {\nlet storage;\ntry {\nstorage = window[type];\nconst x = \"__storage_test__\";\nstorage.setItem(x, x);\nstorage.removeItem(x);\nreturn true;\n} catch (e) {\nreturn (\ne instanceof DOMException &&\ne.name === \"QuotaExceededError\" &&"
+  },
+  "326": {
+    "source": "web-api\\web-storage.md",
+    "text": "// acknowledge QuotaExceededError only if there's something already stored\nstorage &&\nstorage.length !== 0\n);\n}\n}\n```\nAnd here is how you would use it:\n```js\nif (storageAvailable(\"localStorage\")) {\n// Yippee! We can use localStorage awesomeness\n} else {\n// Too bad, no localStorage for us\n}\n```\nYou can test for `sessionStorage` instead by calling `storageAvailable(\"sessionStorage\")`.\n## Example"
+  },
+  "327": {
+    "source": "web-api\\web-storage.md",
+    "text": "To illustrate some typical web storage usage, we have created an example, imaginatively called **Web Storage Demo**. The landing page provides controls that can be used to customize the color, font, and decorative image:\n!Web storage example with text box to choose the color by entering a hex value, and two dropdown menus to choose the font style, and decorative image."
+  },
+  "328": {
+    "source": "web-api\\web-storage.md",
+    "text": "When you choose different options, the page is instantly updated; in addition, your choices are stored in `localStorage`, so that when you leave the page and load it again, later on, your choices are remembered."
+  },
+  "329": {
+    "source": "web-api\\web-storage.md",
+    "text": "We have also provided an event output page — if you load this page in another tab, then make changes to your choices in the landing page, you'll see the updated storage information outputted as a  is fired.\n!Event output page\n> [!NOTE]\n> As well as viewing the example pages live using the above links, you can also check out the source code.\n### Testing whether your storage has been populated"
+  },
+  "330": {
+    "source": "web-api\\web-storage.md",
+    "text": "To start with, in main.js, we test whether the storage object has already been populated (i.e., the page was previously accessed):\n```js\nif (!localStorage.getItem(\"bgcolor\")) {\npopulateStorage();\n} else {\nsetStyles();\n}\n```"
+  },
+  "331": {
+    "source": "web-api\\web-storage.md",
+    "text": "The  method is used to get a data item from storage; in this case, we are testing to see whether the `bgcolor` item exists; if not, we run `populateStorage()` to add the existing customization values to the storage. If there are already values there, we run `setStyles()` to update the page styling with the stored values.\n> [!NOTE]"
+  },
+  "332": {
+    "source": "web-api\\web-storage.md",
+    "text": "> You could also use  to test whether the storage object is empty or not.\n### Getting values from storage\nAs noted above, values can be retrieved from storage using .\nThis takes the key of the data item as an argument, and returns the data value.\nFor example:\n```js\nfunction setStyles() {\nconst currentColor = localStorage.getItem(\"bgcolor\");\nconst currentFont = localStorage.getItem(\"font\");"
+  },
+  "333": {
+    "source": "web-api\\web-storage.md",
+    "text": "const currentImage = localStorage.getItem(\"image\");\ndocument.getElementById(\"bgcolor\").value = currentColor;\ndocument.getElementById(\"font\").value = currentFont;\ndocument.getElementById(\"image\").value = currentImage;\nhtmlElem.style.backgroundColor = `#${currentColor}`;\npElem.style.fontFamily = currentFont;\nimgElem.setAttribute(\"src\", currentImage);\n}\n```"
+  },
+  "334": {
+    "source": "web-api\\web-storage.md",
+    "text": "Here, the first three lines grab the values from local storage.\nNext, we set the values displayed in the form elements to those values, so that they keep in sync when you reload the page.\nFinally, we update the styles/decorative image on the page, so your customization options come up again on reload.\n### Setting values in storage"
+  },
+  "335": {
+    "source": "web-api\\web-storage.md",
+    "text": "is used both to create new data items, and (if the data item already exists) update existing values. This takes two arguments — the key of the data item to create/modify, and the value to store in it.\n```js\nfunction populateStorage() {\nlocalStorage.setItem(\"bgcolor\", document.getElementById(\"bgcolor\").value);\nlocalStorage.setItem(\"font\", document.getElementById(\"font\").value);"
+  },
+  "336": {
+    "source": "web-api\\web-storage.md",
+    "text": "localStorage.setItem(\"image\", document.getElementById(\"image\").value);\nsetStyles();\n}\n```\nThe `populateStorage()` function sets three items in local storage — the background color, font, and image path. It then runs the `setStyles()` function to update the page styles, etc."
+  },
+  "337": {
+    "source": "web-api\\web-storage.md",
+    "text": "We've also included an `onchange` handler on each form element so that the data and styling are updated whenever a form value is changed:\n```js\nbgcolorForm.onchange = populateStorage;\nfontForm.onchange = populateStorage;\nimageForm.onchange = populateStorage;\n```"
+  },
+  "338": {
+    "source": "web-api\\web-storage.md",
+    "text": "`Storage` only supports storing and retrieving strings. If you want to save other data types, you have to convert them to strings. For plain objects and arrays, you can use .\n```js\nconst person = { name: \"Alex\" };\nlocalStorage.setItem(\"user\", person);\nconsole.log(localStorage.getItem(\"user\")); // \"[object Object]\"; not useful!\nlocalStorage.setItem(\"user\", JSON.stringify(person));"
+  },
+  "339": {
+    "source": "web-api\\web-storage.md",
+    "text": "console.log(JSON.parse(localStorage.getItem(\"user\"))); // { name: \"Alex\" }\n```\nHowever, there's no generic way to store arbitrary data types. Furthermore, the retrieved object is a deep copy of the original object and mutations to it do not affect the original object.\n### Responding to storage changes with the StorageEvent"
+  },
+  "340": {
+    "source": "web-api\\web-storage.md",
+    "text": "The  event is fired whenever a change is made to the  object of another document that shares the same storage space. This won't work on the same page that is making the changes — it is really a way for other pages on the origin using the storage to sync any changes that are made. Pages on other origins can't access the same storage objects."
+  },
+  "341": {
+    "source": "web-api\\web-storage.md",
+    "text": "For `localStorage`, the storage space is shared between all tabs with the same origin. For `sessionStorage`, the storage space is only shared within the tab, among all iframes from the same origin.\nOn the events page (see events.js) the only JavaScript is as follows:\n```js\nwindow.addEventListener(\"storage\", (e) => {\ndocument.querySelector(\".my-key\").textContent = e.key;"
+  },
+  "342": {
+    "source": "web-api\\web-storage.md",
+    "text": "document.querySelector(\".my-old\").textContent = e.oldValue;\ndocument.querySelector(\".my-new\").textContent = e.newValue;\ndocument.querySelector(\".my-url\").textContent = e.url;\ndocument.querySelector(\".my-storage\").textContent = JSON.stringify(\ne.storageArea,\n);\n});\n```"
+  },
+  "343": {
+    "source": "web-api\\web-storage.md",
+    "text": "Here we add an event listener to the `window` object that fires when the  object associated with the current origin is changed. As you can see above, the event object associated with this event has a number of properties containing useful information — the key of the data that changed, the old value before the change, the new value after that change, the URL of the document that changed the storag"
+  },
+  "344": {
+    "source": "web-api\\web-storage.md",
+    "text": "e, and the storage object itself (which we've stringified so you can see its content)."
+  },
+  "345": {
+    "source": "web-api\\web-storage.md",
+    "text": "### Deleting data records\nWeb Storage also provides a couple of simple methods to remove data. We don't use these in our demo, but they are very simple to add to your project:\n-  takes a single argument — the key of the data item you want to remove — and removes it from the storage object for that origin.\n-  takes no arguments, and empties the entire storage object for that origin."
+  },
+  "346": {
+    "source": "web-api\\web-storage.md",
+    "text": "## Specifications\n## Browser compatibility\n## See also\n- Web Storage API landing page"
   }
 }

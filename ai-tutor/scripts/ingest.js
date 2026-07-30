@@ -21,22 +21,52 @@ function getMdFiles(dir, fileList = []) {
   return fileList;
 }
 
-// 優化：更乾淨的片段切分與清洗
 function chunkMarkdown(text) {
-  return (
-    text
-      // 1. 移除 YAML Frontmatter (開頭的 --- 到 ---)
-      .replace(/^---[\s\S]+?---\n*/, "")
-      // 2. 移除 MDN 特有模板語法 {{...}}
-      .replace(/\{\{[^}]+\}\}/g, "")
-      // 3. 移除 interactive-example 程式碼區塊 (除非你覺得需要保留)
-      .replace(/```js interactive-example/g, "```js")
-      // 4. 按標題切分
-      .split(/^##\s+/m)
-      .map((chunk) => chunk.trim())
-      .filter((chunk) => chunk.length > 50)
-      .map((chunk) => chunk.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1"))
-  );
+  // 1. 清理 YAML Frontmatter 與模板語法
+  const cleanText = text
+    .replace(/^---[\s\S]+?---\n*/, "")
+    .replace(/\{\{[^}]+\}\}/g, "")
+    .replace(/```js interactive-example/g, "```js")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+
+  // 2. 嚴格按段落或固定長度切分，避免任何 chunk 超過 500 字元
+  const paragraphs = cleanText.split(/\n+/);
+  let finalChunks = [];
+  let currentChunk = "";
+
+  paragraphs.forEach((para) => {
+    const p = para.trim();
+    if (!p) return;
+
+    // 如果單行本身就超級長，強制把它切成小段
+    if (p.length > 400) {
+      if (currentChunk) {
+        finalChunks.push(currentChunk.trim());
+        currentChunk = "";
+      }
+      // 每 400 字元強行切一刀
+      for (let i = 0; i < p.length; i += 400) {
+        finalChunks.push(p.slice(i, i + 400));
+      }
+      return;
+    }
+
+    // 累積段落直到接近 400~500 字元
+    if ((currentChunk + "\n" + p).length > 400) {
+      if (currentChunk.length > 20) {
+        finalChunks.push(currentChunk.trim());
+      }
+      currentChunk = p;
+    } else {
+      currentChunk = currentChunk ? currentChunk + "\n" + p : p;
+    }
+  });
+
+  if (currentChunk.length > 20) {
+    finalChunks.push(currentChunk.trim());
+  }
+
+  return finalChunks;
 }
 
 async function runIngestion() {
@@ -61,6 +91,7 @@ async function runIngestion() {
 
     for (const chunk of chunks) {
       try {
+        console.log(`正在送出請求，字串長度: ${chunk.length}`);
         // 呼叫 Ollama 生成向量
         const response = await fetch("http://localhost:11434/api/embeddings", {
           method: "POST",
@@ -68,7 +99,10 @@ async function runIngestion() {
           body: JSON.stringify({ model: "all-minilm", prompt: chunk }),
         });
 
-        if (!response.ok) throw new Error(`API 錯誤: ${response.statusText}`);
+        if (!response.ok) {
+          const errDetail = await response.text();
+          throw new Error(`API 錯誤: ${response.status} - ${errDetail}`);
+        }
 
         const json = await response.json();
 
