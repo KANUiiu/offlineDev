@@ -92,10 +92,8 @@ This will launch an interactive menu, allowing you to choose between "Q&A Mode" 
 
 ## Attribution & Licensing
 
-The web technical documentation contained in the data/raw-mdn/ directory of this project is copied (or modified) from MDN Web Docs.
+The web technical documentation contained in the `data/raw-mdn/` directory of this project is copied (or modified) from [MDN Web Docs](https://developer.mozilla.org/).
 
-Original Authors: Mozilla Contributors
-
-License: CC-BY-SA 2.5 or later.
-
-Note: The copyright of the documentation content belongs to the original authors. The source code of this project is licensed under the [MIT License].
+- **Original Authors:** [Mozilla Contributors](https://developer.mozilla.org/)
+- **License:** [CC-BY-SA 2.5](https://creativecommons.org/licenses/by-sa/2.5/) or later.
+- **Note:** The copyright of the documentation content belongs to the original authors. The main source code of this project is licensed under the [MIT License].
